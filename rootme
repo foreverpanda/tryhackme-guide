@@ -50,7 +50,7 @@ cannot be displayed because it contains error! probably it could be because of e
 "The image “http://10.10.100.244/uploads/php-reverse-shell.php.jpg” cannot be displayed because it contains errors."
 
 and "WARNING: Failed to daemonise. This is quite common and not fatal. Connection refused (111) " this is for not starting the rev connection listener on the terminal
-
+.
 
 
 then i though of changing the file extention to any another i tried with other versions of php that is php5 or php3 i got shell for php5  but in php3 i got error again
