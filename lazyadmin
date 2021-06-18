@@ -67,6 +67,6 @@ and the ran the file backup.sh with sudo priv as we can run that file with sudo 
 
  sudo /usr/bin/perl /home/itguy/backup.pl
  
- and started a listener on another terminal and got the shell
+ and started a listener on another terminal and got the shell.
  
  
