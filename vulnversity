@@ -39,6 +39,9 @@ searched for suid binaries
 
 saw /bin/systemctl was having suid bit set searched in gtfo bin for that 
 
+
+<img src = "https://user-images.githubusercontent.com/85871209/122644171-6edcc000-d103-11eb-9f24-1aa4ec59824d.png">
+
 TF=$(mktemp).service
 echo '[Service]
 Type=oneshot
