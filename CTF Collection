@@ -1,0 +1,84 @@
+
+THIS IS NOT COMPLETED YET! REMAINING WILL BE COMPLETED SOON!
+
+2: decoding the base64 i got to know this is base64 by looking at the two equals sign in the end
+
+echo "VEhNe2p1NTdfZDNjMGQzXzdoM19iNDUzfQ==" | base64 -d
+
+3: for the second one there was written something like meta meta to we have to see the meta information of the file
+
+first i tried to use exiftool and got the flag in the owner
+
+then i tried with strings findme.jpg
+
+got the flag!
+
+you can also try head findme.jpg
+
+4: so i downlaoded the file and tried steghide as i dint know the password i tried to crack it using stegseek and stegcracker
+
+
+stegseek -sf ~/Downloads/Extinction.jpg -wl ~/Desktop/payloads/wordlist/best110.txt
+stegcracker Extinction.jpg  ~/Desktop/payloads/wordlist/rockyou.txt
+
+but the password was nothing so i got the file 
+
+5. in this the flag is in front of you just blue the thing
+
+6. this was simply a qr code scanned it using my phone
+
+7. reverse it or read it :  now i think that this was for reverse enginnering but idk rev eng so i just cat the hello.hello file and got the flag
+
+8. so okay this was a little bit confusing coz it was base58 and idk how to recognise this one! just saw the hint and used cyberchef for decoding it
+
+9. okay intresting got to learn about something new that is Ceaser cipher (MAF{atbe_max_vtxltk})  decoded it from
+https://www.dcode.fr/caesar-cipher
+
+test all possible shifts 
+
+10. SO idk why i was not able to find this but after seeing the writeup it was just hidden in the comment just in the make a comment seciton
+
+
+11. so in this one the file was spoil idk by some error so as it was not getting opened i opened my hexeditor spoil.png
+
+else you can also do this {
+
+There is a courpted png file that you need to download. I got the hex dump of the courpted png image with the xxd command and stored it to a file named "myhexdump.txt". (--plain = plain hex dump)
+
+head myhexdump.txt
+A magic number is a number embedded at or near the beginning of a file that indicates its file format. So let's replace the magic number with the correct magic number of an png image. I googled it and found out that
+
+So let's replace the correct png magic number in the image
+
+now lets go to cyberchef and use the hex to rander image to get our image
+
+}
+
+and compared the headers of the .png file with a real png file and changed the hex values of the file ! after that i was able to read the flag given in the png file
+
+12. as the hind said something hiddden in thm social account that is reddit i downlaoded the pfp of that account and did all the possible things but nothing worked nut after when i read the writeup it was freaking sick the flag was in a blog of thm! dammm
+
+
+13. so just by seeing i figured it out that was written in brainfuck language so 
+just search for brainfuck decode and got a website decoded thaat from there done!
+
+14. from this one i learned that when we get two stings we can also do this s1 XOR S2
+just went to dcode.fr website pasted both the strings and got the result! on default settings
+
+
+15.  in this as it was written binaary walk i just downlaodedd the file and did a binwalk on that file binwalk -e filename and it extracted the files for me! read the txt file got the flag
+
+
+16. so as nothing was visible in this file i remembered that stegoveritas has a feature to change color scheme of a picture so i just ran stegoveritas on default setting 
+stegoveritas filename
+and went to see all the color changed resutlts and got the flag
+
+
+17.
+
+
+18. for this as it was written dig up the past the first thing clicked my head was web.archive.com  just gone to the website entered the website named directed my self to the particular date from the given calender and the flag was in front of me! below th announcment 
+
+19. so it was given something like wierd : MYKAHODTQ{RVG_YVGGK_FAL_WXF}
+
+i just read the hint it was vigenere cipher so i just went to dcode website and decoded it and the key was THM
