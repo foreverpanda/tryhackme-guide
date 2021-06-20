@@ -13,4 +13,8 @@ I hope you will like this! Star it if these writeups helped you in any case!
 <a href="https://tryhackme.com/p/playgue">Master rank</a>
 
 
-I will try to make it to OMNI level within 1 week with my new account! which i started yesterday (18 june,2021)
+I will try to make it to **OMNI** level within 1 week with my new account! which i started yesterday (18 june,2021)
+
+DATE : 21JUN2021, 12:30AM
+
+**I m lvl 0x7 at this time now!**
