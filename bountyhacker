@@ -1,0 +1,43 @@
+as alwasys started with port scnning
+
+Open 10.10.195.171:22
+Open 10.10.195.171:21
+Open 10.10.195.171:80
+
+got all these now time for nmap scan
+
+got to know ftp has anonymous access
+
+
+started a gobuster scan on port 80!
+
+got only one directory that is images nothing special with that
+then i tried to anonymous login into the ftp server
+
+got two files names locks.txt and task.txt
+
+locks contains some passwords i think
+
+and i task.txt there is a user named lin
+
+so tried to bruteforce ssh with these creds
+used hydra for it
+
+
+hydra -l lin -P locks.txt 10.10.195.171 ssh -t15 -Vv -I
+
+
+[22][ssh] host: 10.10.195.171   login: lin   password: RedDr4gonSynd1cat3
+
+got the user access 
+then did sudo -l
+
+got to know /bin/tar has been given sudo access
+
+searched for it on gtfobin
+
+sudo tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh
+
+this was the exploit cheers got the root user!
+
+did this machine in 12 min lol
