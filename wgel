@@ -85,3 +85,13 @@ nc -lvnp 4343
 you will recive the flag
 
 and completed!
+
+
+so i was not satified after getting the root flag! i wanna to be the root user! i looked for some tuts regarding exploiting sudo perms in wget! and got a great write up
+i just followed this and got the root! user
+
+root@CorpOne:/home/jessie# id
+uid=0(root) gid=0(root) groups=0(root)
+
+https://www.hackingarticles.in/linux-for-pentester-wget-privilege-escalation/
+
