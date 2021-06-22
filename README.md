@@ -18,3 +18,9 @@ I will try to make it to **OMNI** level within 1 week with my new account! which
 DATE : 21JUN2021, 12:30AM
 
 **I m lvl 0x7 at this time now!**
+
+DATE : 22JUNE2021, 22:20
+
+**Reached HACKER[0X8] JUST NOW**
+
+I will try to make it to ***OMNI[0X9]*** in next 2 days! Hope so i will make through it!
