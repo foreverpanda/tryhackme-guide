@@ -1,0 +1,273 @@
+NMAP
+stands for network mapper
+
+-p : ports to scan 
+-sn : ping scan to check the host is up
+-sU : UDP scan
+-sC :for default scripts
+-A : enables aggressive mode for OS detection scrippt sccanning traceroute
+-O : OS detection
+-sV : versions runnign on the machine
+1
+apache
+2.4.18
+Apache2 Ubuntu Default Page: It Works
+
+
+NETCAT aka nc
+
+After you connect to a port with nc you will be able to send data, this also has the consequence of the user being able to pipe data through nc. For example one can do echo hello | nc <ip> 1234 to send the string hello to the service running on port 1234
+
+-l : listen for connections
+-v : enable verbosity
+-p : port to listen on
+-e : file to execute after connection
+-u : for conneting to udp ports
+
+GOBUSTER : 
+
+dir :specify directory/file brute forcing mode
+dns :  specify dns bruteforcing mode
+-x :  extensions to be used
+-w : worldist to be user
+-U : username for basic auth
+-P : password for basic auth
+-s :  status codes gobuster will interpret as valid
+-k : skip for ssl verification
+-a  : specify user-agent
+-H : specify HTTP header
+-u : url to bruteforce
+
+secret
+password 
+
+basic command for gobuster : gobuster dir -u http://ip -w wordlistst -x extentions -t numberofthreads(10)
+
+
+NIKTO : 
+
+-h : host to use
+-nossl : disable ssl
+-ssl : enable ssl
+-id : for basic auth (usernmae + pass)
+-plugins : to select plugin to use
+apache 
+-update : to update plugin list
+--list-plugins : list all possible plugings we can use
+
+
+
+METASPLOIT : 
+
+search : search for modules
+use : select a module
+info : information about a module
+options :  options we can set for a module
+advanced : advanced options of a module
+show : opitons in a specific category
+
+use exploit/windows/smb/ms17_010_eternalblue  :  this is how to select a module
+rhosts
+rport
+set : this is how to set a module
+set smbpass username
+set smbuser password
+arch
+payload
+exploit
+
+sessions : list all sessions
+downaod : downlaod files from the machine
+uplaod : upload file in the machine
+ps : to llist all running process 
+migrate : to change processes on the victim host(Ideally it will allow you to change users and gain the perms associated with that user)
+ls : files in current dir
+execute :  to execute command in the victim macchine
+shell : interactive shell in the remote host
+search : just like find command 
+cat :  to read the files
+background : to make the meterprester shell run in background and we can do other things
+
+
+Note: Regular shells can usually be upgraded to meterpreter shells by using the module post/multi/manage/shell_to_meterpreter
+
+use exploit/multi/http/nostromo_code_exec : this will set the payload
+rhosts 
+set rport 80
+lhost
+s3cretd1r
+Woohoo!
+
+
+HASHCAT : 
+
+
+-m : select mode (which type of hash)
+-a : select attack mode
+3 : attack mmode number for bruteforce
+17600 : sha3-512
+
+i m lazy so i just! echoed all the hashes in 
+
+hashcat -m 0 -a 0 md5 ~/Desktop/payloads/wordlist/rockyou.txt
+happy
+hashcat -m 900 -a 0 md5 ~/Desktop/payloads/wordlist/rockyou.txt 
+nootnoot
+
+JOHNTHERIPPER
+
+--wordlist
+--format
+--rules
+
+
+john --wordlist=~/Desktop/payloads/wordlist/rockyou.txt -format=raw-md5 md5
+
+john md5 --show --format=raw-md5
+
+hello
+
+john --wordlist=~/Desktop/payloads/wordlist/rockyou.txt -format=raw-sha1 md5
+
+john md5 --show --format=raw-sha1
+
+password
+
+SQL INJECTION
+
+-u : url to check
+-g : google dork to use
+-p : parameter to check
+--dbms : which database is in the victim host (will only use injections for the particulat sql)
+--level : select the level of depth sqlmap should use
+--dump :dump the table entries of the database
+-D : database to enumerate
+-T : table to enumerate in the database
+-C : column to enumerate in the database
+--os-shell : sqlmap will try to get an interactie os-shell
+--dump-all : dump all the details of every table
+
+
+sqlmap -u 10.10.123.97 --forms --flush-session --dump --os-shell
+
+typed this command to get sql ijection
+
+this is what i got
+
+Database: tests
+Table: msg
+[2 entries]
++------+
+| msg  |
++------+
+| msg  |
+| test |
++------+
+
+Database: tests
+Table: lol
+[1 entry]
++----------+
+| flag     |
++----------+
+| found_me |
++----------+
+
+
+
+
+
+3
+tests
+2
+found_me
+
+
+SMBMAP  : 
+
+-u : username to autheticate with
+-p : password
+-h : host
+-x : if you want to run command after connecting(if you have perms)
+-s : share to enumerate
+-d : domain to enumerate
+--download : to downlaod a file
+--upload : to upload a file
+
+ Given the username "admin", the password "password", and the ip "10.10.10.10", how would you run ipconfig on that machine
+
+smbmap -u admin -p password -H 10.10.10.10 -x "ipconfig"
+
+SMBCLIENT
+
+-w : specify which domain(workgroup) to use when connecting to the host?
+-i : ip address of the host
+-c command :  to run a command on the target machine
+-U  : username to authenticate with
+-P : password to autheticate with
+-N : tells smbclient not to use password
+get filenmae : to downlaod a file
+put filename : to upload a file
+
+PRIVERLIDGE ESCALATION : 
+privilege escalation is such a large topic that it would be  impossible to do it proper justice in this type of room. However, it is a  necessary topic that must be covered, so rather than making a task with  questions, I shall provide you all with some resources.
+General:
+https://github.com/swisskyrepo/PayloadsAllTheThings (A bunch of tools and payloads for every stage of pentesting)
+
+
+
+Linux: 
+https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/ (a bit old but still worth looking at)
+https://github.com/rebootuser/LinEnum (One of the most popular priv esc scripts)
+https://github.com/diego-treitos/linux-smart-enumeration/blob/master/lse.sh (Another popular script)
+https://github.com/mzet-/linux-exploit-suggester (A Script that's dedicated to searching for kernel exploits)
+
+
+https://gtfobins.github.io (I  can not overstate the usefulness of this for priv esc, if a common  binary has special permissions, you can use this site to see how to get  root perms with it.)
+
+
+
+Windows:
+
+
+https://www.fuzzysecurity.com/tutorials/16.html  (Dictates some very useful commands and methods to enumerate the host and gain intel)
+
+
+https://github.com/PowerShellEmpire/PowerTools/tree/master/PowerUp (A bit old but still an incredibly useful script)
+
+
+https://github.com/411Hall/JAWS (A general enumeration script)
+
+
+
+==========================================
+
+FINAL EXAM : MACHINE
+--->
+so first i started with rustscan this is what i always do! nmap is slowyyyyyy! 
+i got to know there are two ports open 80,22
+
+
+
+got on port 80 
+and started a gobuster scan 
+
+
+
+and found a directory named secret!
+tried to look into it but it was empty so i scanned for directories and files in the secret dir! found a secret.txt file
+
+
+
+
+read that and those were ssh username:password for a user first i tried to login with those creds but was unsuccessful then i saw that the password was a hash string i decoded that using crackstation and got the password!
+after that logged in into the ssh account!1
+
+ssh nayan@ip
+
+saw the sudo -l and saw that the user can run /bin/su with sudo prividleged! and i just did that only
+sudo /bin/su
+and got the root! cheers!
+
+
+
