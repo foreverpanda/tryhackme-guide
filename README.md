@@ -24,3 +24,7 @@ DATE : 22JUNE2021, 22:20
 **Reached HACKER[0X8] JUST NOW**
 
 I will try to make it to ***OMNI[0X9]*** in next 2 days! Hope so i will make through it!
+
+**24JUNE2021**
+FOR**OMNI[0x9]** we need 4k points ! Made 1.1k points in last 2 days! busy in college exams and some other works! 
+Hope i will make it to WIZARD soon!
