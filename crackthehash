@@ -1,0 +1,67 @@
+so this was an intresting room! most of the hashes were cracked using online tools such as crackstation cyberchef and dcode
+
+LEVEL1: 
+
+this is an easy task used crack station to crack all of them
+
+1.) 48bb6e862e54f2a795ffc4e541caed4d		
+    md5	easy
+
+2.) CBFDAC6008F9CAB4083784CBD1874F76618D2A97
+    sha1	password123
+
+3.) 1C8BFE8F801D79745C4631D09FFF36C82AA37FC4CCE4FC946683D7B336B63032
+    sha256	letmein
+
+4.) $2y$12$Dwt1BZj6pcyc3Dy1FWZ5ieeUznr71EeNkJkUlypTsgbX1H68wsRom 
+
+(in this one i used hashcat hash types page to look what kind of hash is this! just visit that page use ctrl+f and type the starting of the hash $2 you will see some of the hashes and try to figure out which one is you are looking for)
+
+ after getting the module number i just used hashcat to crack this
+
+  hashcat -m 3200 -a 0 hash.txt wordlist.txt
+  bleh
+
+5.) 279412f945939ba78ce0758d3fd83daa
+    md4	Eternity22
+
+LEVEL 2
+
+1.) F09EDCB1FCEFC6DFB23DC3505A882655FF77375ED8AA2D1C13F640FCCC2D0C85
+    sha256	paule
+
+2.) $6$aReallyHardSalt$6WKUTqzq.UQQmrm0p/T7MPpMbGNnzXPMAXi4bJMl9be.cfi3/qxIf.hsGpS41BqMhSrHVXgMpdjS6xeKZAs02. 
+So this was a little tricky i know that this is hash is used in storing unix passwords!
+so what i did was tryed to echo it out in one of txt file and use 1800 to crack this but this didnt worked for me!
+so i cat outed my shadow file and saw the format it was like something this!
+
+username:passwordhash:lastchanged:minimun:maximum:warn:inactive:expire
+
+so this kind of format is what hashcat is expecting from us to cracck the password you
+can also just remove the hash and put this hash and pass it in hashcat or replicate the format and crack the hash
+
+after creating a new hashtype of this hash 
+
+alex:$6$aReallyHardSalt$6WKUTqzq.UQQmrm0p/T7MPpMbGNnzXPMAXi4bJMl9be.cfi3/qxIf.hsGpS41BqMhSrHVXgMpdjS6xeKZAs02.:13064:0:9999:7:::
+
+
+something like this i saved this into a text file and stated hashcat on it
+
+hashcat -m 1800 -a 0 hash.txt wordlist and it cracked the password for me took sometime
+
+$6$aReallyHardSalt$6WKUTqzq.UQQmrm0p/T7MPpMbGNnzXPMAXi4bJMl9be.cfi3/qxIf.hsGpS41BqMhSrHVXgMpdjS6xeKZAs02.:waka99
+
+#username:passwordhash.:userid:groupid:useridinfo:homedir:commandshell  ---->passwd file
+
+
+3.) Hash: e5d8870e5bdd26602cab8dbe07a942c8669e56d6:tryhackme
+
+Solution: This hash also cannot be cracked using online tool due to the present of salt ( tryhackme ). This only can be done by using hashcat with mode -m 110.
+
+  481616481616
+
+
+
+
+4.) 1DFECA0C002AE40B8619ECF94819CC1B
+  NTLM	n63umy8lkf4i
