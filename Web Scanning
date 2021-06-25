@@ -39,13 +39,13 @@ when we will open the robots.txt in browser it will show
 
 /
 
-/dvwa/images
+/dvwa/images  : in spider section URLs
 
 Httponly : available in alerts
 
 Web Browser XSS Protection Not Enabled : my zap was outdated so this wasnt available on my zap
 
-http://www.dvwa.co.uk
+http://www.dvwa.co.uk : in Spider section URLs
 
 GET : parameter used to retrieve something from the website
 
