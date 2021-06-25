@@ -74,7 +74,7 @@ stegoveritas filename
 and went to see all the color changed resutlts and got the flag
 
 
-17.
+17. just read the qr code by qr scanner using online tool or by phone it will give you a link open the link and listen the flag!
 
 
 18. for this as it was written dig up the past the first thing clicked my head was web.archive.com  just gone to the website entered the website named directed my self to the particular date from the given calender and the flag was in front of me! below th announcment 
@@ -82,3 +82,9 @@ and went to see all the color changed resutlts and got the flag
 19. so it was given something like wierd : MYKAHODTQ{RVG_YVGGK_FAL_WXF}
 
 i just read the hint it was vigenere cipher so i just went to dcode website and decoded it and the key was THM
+
+20. it was a bit tricky first i tried with code chef but i was not able to crack the flag then i visited decimal to hex and got the hash after that i converted that hex to asccii code and fot the gflag
+
+21.  just open the wireshark and read the file it would take some time so just sort it according to protocol and see all the preotocols you will surely get the flag!
+check HTTP too!
+
