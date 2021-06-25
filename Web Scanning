@@ -1,0 +1,54 @@
+NIKTO
+
+-h : to set target host
+
+-nossl : to disable ssl check in nikto
+
+-ssl : to enable ssl check
+
+-p : to specify a port
+
+-dbcheck :  to check database is free from errors! (As the web is constantly evolving, so is Nikto. A database of vulnerabilities represents a core component to this web scanner, how do we verify that this database is working and free from error?)
+
+-mutate 3 : Nikto will attempt to guess and test both files within directories as well as usernames. Which switch and numerical value do we use to set Nikto to enumerate usernames in Apache
+
+-id admin:pass : for basic auth
+
+nikto --url http://ip 
+
+Apache/2.4.7
+Config
+
+-until : order to limit the scan to end at a certain time
+
+-list-plugins : to list all available plugins
+
+-Plugins tests : plugins to run a series of standard tests against the target host
+
+===================================
+
+OWASP-ZAP
+
+affter selecting automated scan we can clearly see
+
+URL to attack
+
+robots.txt in the output
+
+when we will open the robots.txt in browser it will show
+
+/
+
+/dvwa/images
+
+Httponly : available in alerts
+
+Web Browser XSS Protection Not Enabled : my zap was outdated so this wasnt available on my zap
+
+http://www.dvwa.co.uk
+
+GET : parameter used to retrieve something from the website
+
+POST : parameter used to upload/send something to the website
+
+
