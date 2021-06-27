@@ -1,0 +1,39 @@
+10.10.188.118
+
+rustscan -a 10.10.188.118
+
+on port 80
+
+Apache/2.4.29 (Ubuntu) 
+
+on port 8000
+
+
+gobuster dir -u http://10.10.188.118 -w /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -t 100 -x txt,php,html
+
+got only index.html
+
+from the website index.html page
+
+i saw this
+
+Welcome to this site, myself Jake and my username is bolt .I am still  new to this CMS so it can take awhile for me to get used to this CMS  but believe me i have some great content coming up for you all!
+Regards,
+Jake (Admin)
+
+
+i suppose this is our secret forum right? I posted my first message  for our readers today but there seems to be a lot of freespace out  there. Please check it out! my password is boltadmin123 just incase you  need it!
+
+
+now after getting the creds i tried to find out the version of the cms but havent foud the version on the main website so i tried to look for the admin panel of the website but didnt got it!
+
+looked for the admin panel for the bolt cms and it showed me this result
+
+to add /bolt/login at the end of the url to enter in the admin panel
+
+i entered in the admin panel and entered the creds ! saw the version of the cms and after that searched for bolt cms 3.7.1 exploit on google saw that rapid7 have an module for it! search for it on msfconsole 
+search bolt
+
+msf6 exploit(unix/webapp/bolt_authenticated_rce)
+
+entered the options and i got the shell in the machine after that read the flag! as the main user i logged in is was the root! cheers
