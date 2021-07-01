@@ -1,0 +1,24 @@
+In this machine i just deployed it and visited the web page !
+
+saw that there are almost 3 articles present in the main page!
+visited the first page and saw the url
+
+http://10.10.130.51/article?name=hacking
+
+
+so here the parameter name is fetching a page named hacking
+i though of using lfi here only and did /etc/passwd without any dir traversal it showed me 
+error! i though of doing dir traversal this time! and after going to the 3 directories back! 
+
+http://10.10.130.51/article?name=/../../../etc/passwd
+
+i got the /etc/passwd file from where i got a username and a password
+
+just tried to ssh into the machine and i was successful
+
+first thing i though of doing is see the sudo perms the user has with "sudo -l"
+the user can run socat with root user priv went to gtfo bins and got the command to get sudo with socat 
+
+sudo socat stdin exec:/bin/sh
+
+not i am the root user got the user and root flag! bingo! :)
