@@ -1,0 +1,116 @@
+CC STEGANOGRAPHY
+
+this is the only room which i had done earlier and helped me alot to learn about stego! 
+the first time i did this room was by looking into the weiteups but lets see this time
+
+
+TASK2  : 
+
+almost all the answers were written in the help of the steghide which can be seen like this
+
+steghide --help
+
+embed
+-ef
+-cf
+-p
+extract
+-sf
+stehide extract -sf jpeg1.jpeg
+pinguftw
+
+
+TASK3 : 
+
+--lsb
+--msb
+-v
+-E
+zsteg filename
+
+and this only gives you the answer
+
+nootnoot$
+b1,bgr,lsb,xy
+
+
+TASK4 : 
+
+
+exiftool filename
+
+Hello :)
+
+
+TASK5   : 
+
+-meta
+
+-steghide
+
+-extractLSB
+
+for this i was confused which option to choose i just did this
+
+stegoveritas filename
+
+this will do all the thing for you and give you answer now i went to results directory and in the end there was a file with .bin ext just cat out the file andd you will see the asnwer
+
+
+TASK6 : 
+
+Sonic Visualizer
+
+From there click File->Open and then select the included wav1 file 
+
+From there click Layer->Add Spectrogram
+
+answer is google
+
+
+
+
+============================
+
+
+EXAM PART
+
+
+i visited the website and saw a image downloaded it and tried steghide with no password nothing happend after that tried exif tool
+
+exiftool filename
+
+it gave me somthing like this
+
+
+Document Name                   : password=admin
+
+
+i think thiss is the key
+
+but it didnt worked out then i used! the admin to use it as the steghide passphrase annd i got a file key
+steghide extract -sf exam1.jpeg 
+Enter passphrase: 
+wrote extracted data to "a.txt".
+
+cat a.txt 
+the key is: superkeykey
+
+
+for task two i just opened sonic visualiser and added a  layer of psectogram on the wav file and i got this link from that i viisted this link
+
+https://imgur.com/KTrtNI5
+
+
+i downloaded the file image given there tried stegoveritas steghide and exif it didnt worked but in the end i did
+zsteg scan and i got the key
+
+zsteg file
+
+
+b1,bgr,lsb,xy       .. text: "\rKey: fatality"
+
+
+the last one was easy enough i just did stegoveritas on the image and i got a bright qr code in the results i scanned it and got the answer
+
+http://key=killshot
